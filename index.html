@@ -1,0 +1,1357 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Holdways | Fencing & Landscaping</title>
+  <meta name="description" content="Holdways provides professional fencing, gates, turfing, sleeper beds, decking, pergolas, planting plans, trees and shrubs. Contact Holdways for a free quote.">
+  <meta name="keywords" content="Holdways, fencing, landscaping, closeboard fencing, concrete fences, gates, turfing, sleeper beds, decking, pergolas, planting plans">
+  <meta name="author" content="Holdways">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#eef1ec">
+  <meta property="og:title" content="Holdways | Fencing & Landscaping">
+  <meta property="og:description" content="Careful timber and concrete fencing, gates, garden landscaping, decking, pergolas and planting plans.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="HERO.JPG">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="logo.png">
+  <style>
+    :root {
+      --paper: #eef1ec;
+      --card: rgba(252, 250, 244, 0.92);
+      --card-solid: #fcfaf4;
+      --ink: #20271f;
+      --muted: #637063;
+      --line: rgba(32, 39, 31, 0.16);
+      --moss: #466b52;
+      --moss-contrast: #fff;
+      --blue: #556f7a;
+      --clay: #9b684f;
+      --sun: #d6b56d;
+      --shadow: 0 26px 80px rgba(35, 39, 31, 0.22);
+      --soft-shadow: 0 14px 35px rgba(35, 39, 31, 0.13);
+      --serif: Constantia, "Sitka Text", "Palatino Linotype", Georgia, serif;
+      --sans: "Segoe UI Variable", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    :root.ink {
+      --paper: #151a17;
+      --card: rgba(32, 38, 33, 0.91);
+      --card-solid: #202621;
+      --ink: #f5f0e6;
+      --muted: #b9c0b5;
+      --line: rgba(245, 240, 230, 0.16);
+      --moss: #b8c996;
+      --moss-contrast: #151a17;
+      --blue: #9bb7be;
+      --clay: #d2a188;
+      --sun: #dec276;
+      --shadow: 0 26px 80px rgba(0, 0, 0, 0.42);
+      --soft-shadow: 0 16px 35px rgba(0, 0, 0, 0.28);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      color-scheme: light;
+      background: var(--paper);
+    }
+
+    html.ink {
+      color-scheme: dark;
+    }
+
+    body {
+      min-height: 100svh;
+      margin: 0;
+      background:
+        linear-gradient(115deg, rgba(238, 241, 236, 0.92), rgba(232, 228, 218, 0.84) 42%, rgba(215, 224, 221, 0.86)),
+        url("HERO.JPG") center / cover fixed;
+      color: var(--ink);
+      font-family: var(--sans);
+      letter-spacing: 0;
+    }
+
+    html.ink body {
+      background:
+        linear-gradient(115deg, rgba(15, 19, 16, 0.92), rgba(32, 38, 33, 0.84) 48%, rgba(20, 28, 31, 0.9)),
+        url("HERO.JPG") center / cover fixed;
+    }
+
+    body::before {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-image:
+        linear-gradient(rgba(32, 39, 31, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(32, 39, 31, 0.04) 1px, transparent 1px);
+      background-size: 34px 34px;
+      content: "";
+      pointer-events: none;
+    }
+
+    html.ink body::before {
+      opacity: 0.28;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .skip-link {
+      position: fixed;
+      left: 1rem;
+      top: 1rem;
+      z-index: 100;
+      transform: translateY(-150%);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--card-solid);
+      color: var(--ink);
+      padding: 0.75rem 1rem;
+      text-decoration: none;
+      transition: transform 180ms ease;
+    }
+
+    .skip-link:focus {
+      transform: translateY(0);
+      outline: 3px solid rgba(70, 107, 82, 0.26);
+      outline-offset: 3px;
+    }
+
+    .stage {
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: clamp(0.75rem, 2.5vw, 2rem);
+    }
+
+    .business-card {
+      width: min(1120px, 100%);
+      max-height: calc(100svh - clamp(1.5rem, 5vw, 4rem));
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px) saturate(1.08);
+      transform: perspective(1200px) rotateX(var(--tilt-y, 0deg)) rotateY(var(--tilt-x, 0deg));
+      transition: transform 220ms ease, background-color 220ms ease;
+    }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem clamp(1rem, 2.4vw, 1.6rem);
+    }
+
+    .card-top {
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: inline-flex;
+      min-width: 0;
+      align-items: center;
+      gap: 0.85rem;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .brand img {
+      width: min(210px, 52vw);
+      height: auto;
+    }
+
+    .small-controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 0.55rem;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 0.58rem 0.78rem;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .status::before {
+      width: 0.45rem;
+      height: 0.45rem;
+      border-radius: 999px;
+      background: var(--moss);
+      content: "";
+    }
+
+    .link-button,
+    .tab,
+    .thumb,
+    .lightbox-control {
+      border: 0;
+      cursor: pointer;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .link-button:hover,
+    .link-button:focus-visible {
+      border-color: color-mix(in srgb, var(--moss) 55%, transparent);
+      color: var(--moss);
+      transform: translateY(-1px);
+      outline: 0;
+    }
+
+    .card-body {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(390px, 1.1fr);
+      gap: clamp(1rem, 2vw, 1.5rem);
+      overflow: hidden;
+      padding: clamp(1rem, 2.6vw, 1.8rem);
+    }
+
+    .identity {
+      min-width: 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: clamp(1.25rem, 2.6vw, 2rem);
+      padding: clamp(0.15rem, 0.6vw, 0.4rem);
+    }
+
+    .eyebrow {
+      margin: 0 0 1rem;
+      color: var(--clay);
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 10.2em;
+      margin: 0;
+      color: var(--ink);
+      font-family: var(--serif);
+      font-size: clamp(2.7rem, 5.7vw, 4.85rem);
+      font-weight: 430;
+      line-height: 0.96;
+      text-wrap: balance;
+    }
+
+    .intro {
+      max-width: 35rem;
+      margin: 1.15rem 0 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 1.8vw, 1.16rem);
+      line-height: 1.55;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+    }
+
+    .link-button {
+      display: inline-flex;
+      min-height: 2.85rem;
+      align-items: center;
+      justify-content: center;
+      gap: 0.55rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--card-solid) 72%, transparent);
+      color: var(--ink);
+      padding: 0.78rem 1rem;
+      font-size: 0.9rem;
+      font-weight: 750;
+      transition: border-color 180ms ease, color 180ms ease, background 180ms ease, transform 180ms ease;
+    }
+
+    .link-button.primary {
+      border-color: var(--moss);
+      background: var(--moss);
+      color: var(--moss-contrast);
+      box-shadow: 0 12px 24px rgba(70, 107, 82, 0.25);
+    }
+
+    .link-button.primary:hover,
+    .link-button.primary:focus-visible {
+      color: var(--moss-contrast);
+      background: color-mix(in srgb, var(--moss) 90%, #000);
+    }
+
+    .quiet-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem 0.5rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .actions + .quiet-list {
+      margin-top: 0.75rem;
+    }
+
+    .quiet-list li {
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      padding: 0 0 0.2rem;
+      font-size: 0.8rem;
+      font-weight: 650;
+    }
+
+    .pocket {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(190px, 0.85fr) minmax(0, 1fr);
+      gap: clamp(0.85rem, 1.9vw, 1.25rem);
+    }
+
+    .photo-panel {
+      min-height: 0;
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) auto;
+      gap: 0.7rem;
+    }
+
+    .feature-button {
+      position: relative;
+      min-height: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #1f271f;
+      padding: 0;
+      cursor: zoom-in;
+      box-shadow: var(--soft-shadow);
+    }
+
+    .feature-button img {
+      width: 100%;
+      height: 100%;
+      min-height: 260px;
+      object-fit: cover;
+      filter: saturate(0.92) contrast(0.98);
+      transition: transform 500ms ease, filter 500ms ease;
+    }
+
+    .feature-button:hover img,
+    .feature-button:focus-visible img {
+      transform: scale(1.025);
+      filter: saturate(1) contrast(1);
+    }
+
+    .feature-button:focus-visible {
+      outline: 3px solid color-mix(in srgb, var(--moss) 32%, transparent);
+      outline-offset: 4px;
+    }
+
+    .photo-note {
+      position: absolute;
+      left: 0.8rem;
+      right: 0.8rem;
+      bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 999px;
+      background: rgba(20, 24, 19, 0.58);
+      color: #fff;
+      padding: 0.55rem 0.65rem 0.55rem 0.8rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .photo-note span {
+      min-width: 0;
+      overflow: hidden;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .thumb-strip {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 0.35rem;
+      align-items: center;
+    }
+
+    .thumb-arrow {
+      width: 1.35rem;
+      height: 2.1rem;
+      display: inline-grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--card-solid) 76%, transparent);
+      color: var(--muted);
+      cursor: pointer;
+      transition: border-color 170ms ease, color 170ms ease, transform 170ms ease;
+    }
+
+    .thumb-arrow:hover,
+    .thumb-arrow:focus-visible {
+      border-color: var(--clay);
+      color: var(--clay);
+      outline: 0;
+      transform: translateY(-1px);
+    }
+
+    .thumbs {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.45rem;
+    }
+
+    .thumb {
+      aspect-ratio: 1.35;
+      overflow: hidden;
+      border: 2px solid transparent;
+      border-radius: 9px;
+      background: var(--line);
+      padding: 0;
+      transition: border-color 170ms ease, transform 170ms ease;
+    }
+
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .thumb:hover,
+    .thumb:focus-visible,
+    .thumb.is-active {
+      border-color: var(--clay);
+      outline: 0;
+      transform: translateY(-1px);
+    }
+
+    .detail-panel {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      overflow: hidden;
+      border-left: 1px solid var(--line);
+      padding-left: clamp(0.85rem, 1.8vw, 1.15rem);
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      padding-bottom: 0.9rem;
+    }
+
+    .tab {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      padding: 0.57rem 0.82rem;
+      font-size: 0.78rem;
+      font-weight: 800;
+      transition: background 170ms ease, border-color 170ms ease, color 170ms ease;
+    }
+
+    .tab[aria-selected="true"] {
+      border-color: transparent;
+      background: var(--ink);
+      color: var(--card-solid);
+    }
+
+    .tab:focus-visible {
+      outline: 3px solid color-mix(in srgb, var(--moss) 30%, transparent);
+      outline-offset: 3px;
+    }
+
+    .panels {
+      display: grid;
+      min-height: 0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .panel {
+      grid-area: 1 / 1;
+      display: grid;
+      align-content: start;
+      gap: 0.9rem;
+      overflow: auto;
+      padding-right: 0.25rem;
+      pointer-events: none;
+      scrollbar-width: thin;
+      visibility: hidden;
+    }
+
+    .panel.is-active {
+      pointer-events: auto;
+      visibility: visible;
+    }
+
+    .kicker {
+      margin: 0;
+      color: var(--blue);
+      font-size: 0.73rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .panel h2 {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: clamp(1.8rem, 3.2vw, 2.65rem);
+      font-weight: 430;
+      line-height: 1;
+      text-wrap: balance;
+    }
+
+    .panel p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .service-grid {
+      display: grid;
+      gap: 0.55rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .service-grid li,
+    .contact-row {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 0.75rem;
+      align-items: center;
+      border-top: 1px solid var(--line);
+      padding: 0.7rem 0 0;
+    }
+
+    .service-grid i,
+    .contact-row i {
+      color: var(--clay);
+    }
+
+    .service-grid strong,
+    .contact-row strong {
+      display: block;
+      color: var(--ink);
+      font-size: 0.96rem;
+    }
+
+    .service-grid span,
+    .contact-row span {
+      display: block;
+      overflow-wrap: anywhere;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.55;
+    }
+
+    .contact-row {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .contact-row:hover strong,
+    .contact-row:focus-visible strong {
+      color: var(--moss);
+    }
+
+    .contact-row:focus-visible {
+      outline: 3px solid color-mix(in srgb, var(--moss) 30%, transparent);
+      outline-offset: 4px;
+    }
+
+    .note {
+      border-left: 2px solid var(--clay);
+      color: var(--muted);
+      padding-left: 0.85rem;
+      font-size: 0.94rem;
+    }
+
+    .toast {
+      position: fixed;
+      right: 1rem;
+      bottom: 1rem;
+      z-index: 120;
+      transform: translateY(1rem);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--card-solid);
+      box-shadow: var(--soft-shadow);
+      color: var(--ink);
+      opacity: 0;
+      padding: 0.72rem 0.95rem;
+      pointer-events: none;
+      transition: opacity 180ms ease, transform 180ms ease;
+    }
+
+    .toast.is-visible {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      display: none;
+      place-items: center;
+      background: rgba(14, 17, 15, 0.88);
+      padding: clamp(1rem, 4vw, 2rem);
+      backdrop-filter: blur(14px);
+    }
+
+    .lightbox.is-open {
+      display: grid;
+    }
+
+    .lightbox figure {
+      width: min(1080px, 100%);
+      margin: 0;
+    }
+
+    .lightbox img {
+      width: 100%;
+      max-height: 78vh;
+      border-radius: 14px;
+      object-fit: contain;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.48);
+    }
+
+    .lightbox figcaption {
+      margin-top: 0.75rem;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    .lightbox-control {
+      position: fixed;
+      display: inline-grid;
+      width: 2.75rem;
+      height: 2.75rem;
+      place-items: center;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      color: white;
+      transition: background 170ms ease, transform 170ms ease;
+    }
+
+    .lightbox-control:hover,
+    .lightbox-control:focus-visible {
+      background: rgba(255, 255, 255, 0.22);
+      outline: 0;
+      transform: translateY(-1px);
+    }
+
+    .fallback-icon {
+      display: inline-grid;
+      place-items: center;
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .has-lucide .fallback-icon {
+      display: none;
+    }
+
+    .lightbox-close {
+      right: 1rem;
+      top: 1rem;
+    }
+
+    .lightbox-prev {
+      left: 1rem;
+      top: 50%;
+    }
+
+    .lightbox-next {
+      right: 1rem;
+      top: 50%;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+    }
+
+    @media (max-width: 940px) {
+      body {
+        background-attachment: scroll;
+      }
+
+      .stage {
+        place-items: start center;
+      }
+
+      .business-card {
+        max-height: none;
+      }
+
+      .card-body {
+        grid-template-columns: 1fr;
+      }
+
+      .identity {
+        gap: 1rem;
+      }
+
+      .pocket {
+        grid-template-columns: 1fr;
+      }
+
+      .feature-button img {
+        max-height: 38svh;
+        min-height: 220px;
+      }
+
+      .detail-panel {
+        border-left: 0;
+        border-top: 1px solid var(--line);
+        padding-left: 0;
+        padding-top: 1rem;
+      }
+
+      .panel {
+        max-height: 22rem;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .stage {
+        padding: 0.5rem;
+      }
+
+      .business-card {
+        border-radius: 14px;
+      }
+
+      .card-top {
+        align-items: flex-start;
+        padding: 0.75rem 0.9rem;
+      }
+
+      .brand img {
+        width: min(150px, 48vw);
+      }
+
+      .status {
+        display: none;
+      }
+
+      .card-body {
+        padding: 0.75rem;
+      }
+
+      .eyebrow {
+        margin-bottom: 0.65rem;
+        font-size: 0.68rem;
+      }
+
+      h1 {
+        font-size: clamp(2.2rem, 10.5vw, 2.95rem);
+        line-height: 1.02;
+      }
+
+      .intro {
+        margin-top: 0.8rem;
+        font-size: 0.94rem;
+        line-height: 1.47;
+      }
+
+      .identity {
+        gap: 0.85rem;
+      }
+
+      .actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.55rem;
+      }
+
+      .link-button {
+        min-height: 2.6rem;
+        min-width: 0;
+        padding: 0.65rem 0.7rem;
+        font-size: 0.86rem;
+      }
+
+      .link-button.primary {
+        grid-column: 1 / -1;
+      }
+
+      .quiet-list {
+        display: none;
+      }
+
+      .feature-button img {
+        max-height: 25svh;
+        min-height: 185px;
+      }
+
+      .thumbs {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .lightbox-prev,
+      .lightbox-next {
+        display: none;
+      }
+    }
+
+    @media (max-height: 720px) and (min-width: 941px) {
+      .business-card {
+        max-height: none;
+      }
+
+      .stage {
+        place-items: start center;
+      }
+
+      .feature-button img {
+        min-height: 230px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+
+      .business-card {
+        transform: none !important;
+      }
+    }
+  </style>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "Holdways",
+      "image": "HERO.JPG",
+      "founder": "Joszef",
+      "email": "hello@holdways.co.uk",
+      "telephone": "+447754274196",
+      "url": "https://share.google/PYTV7u9ZlYblenDmI",
+      "areaServed": "Local service area",
+      "description": "Professional fencing and landscaping services including closeboard and concrete fences, gates, turfing, slabs, sleeper beds, decking, pergolas, planting plans, trees and shrubs.",
+      "sameAs": ["https://share.google/PYTV7u9ZlYblenDmI"]
+    }
+  </script>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <main id="main" class="stage">
+    <section class="business-card" aria-label="Holdways interactive business card">
+      <header class="card-top">
+        <a href="https://share.google/PYTV7u9ZlYblenDmI" target="_blank" rel="noopener" class="brand" aria-label="Open Holdways on Google">
+          <img src="logo.png" alt="Holdways">
+        </a>
+        <div class="small-controls">
+          <span class="status">free quotes</span>
+        </div>
+      </header>
+
+      <div class="card-body">
+        <section class="identity" aria-labelledby="site-heading">
+          <div>
+            <p class="eyebrow">Holdways / local fencing and landscaping</p>
+            <h1 id="site-heading">Your Space. Expertly Framed.</h1>
+            <p class="intro">We build strong fences and beautiful gardens with sleeper beds, decking, patios and bespoke garden structures.</p>
+          </div>
+
+          <div>
+            <div class="actions" aria-label="Primary contact actions">
+              <a href="tel:+447754274196" class="link-button primary">
+                <i data-lucide="phone" width="18" height="18"></i>
+                Call 07754 274196
+              </a>
+              <a href="mailto:hello@holdways.co.uk?subject=Holdways%20quote%20request" class="link-button">
+                <i data-lucide="mail" width="18" height="18"></i>
+                Email
+              </a>
+              <button id="saveContact" type="button" class="link-button">
+                <i data-lucide="contact" width="18" height="18"></i>
+                Save contact
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="pocket" aria-label="Project details and photographs">
+          <div class="photo-panel">
+            <button id="featureButton" type="button" class="feature-button" aria-label="Open selected project photograph">
+              <img id="featureImage" src="HERO.JPG" alt="Finished fencing and landscaping project by Holdways" fetchpriority="high" decoding="async">
+              <span class="photo-note">
+                <span id="featureCaption">Fencing and garden finish</span>
+                <i data-lucide="expand" width="17" height="17" aria-hidden="true"></i>
+              </span>
+            </button>
+
+            <div class="thumb-strip" aria-label="Project photographs">
+              <button id="thumbPrev" type="button" class="thumb-arrow" aria-label="Previous project thumbnails">
+                <i data-lucide="chevron-left" width="14" height="14" aria-hidden="true"></i>
+              </button>
+              <div id="thumbs" class="thumbs" aria-label="Choose project photograph"></div>
+              <button id="thumbNext" type="button" class="thumb-arrow" aria-label="Next project thumbnails">
+                <i data-lucide="chevron-right" width="14" height="14" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="detail-panel">
+            <div class="tabs" role="tablist" aria-label="Business card details">
+              <button id="tab-note" type="button" class="tab" role="tab" aria-selected="true" aria-controls="panel-note" data-panel="note">Note</button>
+              <button id="tab-work" type="button" class="tab" role="tab" aria-selected="false" aria-controls="panel-work" data-panel="work">Work</button>
+              <button id="tab-contact" type="button" class="tab" role="tab" aria-selected="false" aria-controls="panel-contact" data-panel="contact">Contact</button>
+            </div>
+
+            <div class="panels">
+              <article id="panel-note" class="panel is-active" role="tabpanel" aria-labelledby="tab-note" aria-hidden="false">
+                <p class="kicker">First conversation</p>
+                <h2>Start with the awkward corner, the broken gate or a rough sketch.</h2>
+                <p>Send a few photos, measurements if you have them, and a rough idea of where you'd like your garden to end up. We'll come back with practical next steps and a free quote.</p>
+                <p class="note">30+ years of combined hands-on experience across fencing, landscaping and bespoke garden structures.</p>
+              </article>
+
+              <article id="panel-work" class="panel" role="tabpanel" aria-labelledby="tab-work" aria-hidden="true">
+                <p class="kicker">Common jobs</p>
+                <h2>Secure Boundaries. Stunning Landscapes.</h2>
+                <ul class="service-grid">
+                  <li>
+                    <i data-lucide="shield-check" width="19" height="19" aria-hidden="true"></i>
+                    <span><strong>Fencing and gates</strong>Closeboard panels, concrete posts, gravel boards, gate fitting, picket fencing and repairs.</span>
+                  </li>
+                  <li>
+                    <i data-lucide="layers-3" width="19" height="19" aria-hidden="true"></i>
+                    <span><strong>Groundwork and structures</strong>Raised beds, decking, slabs, paths, retaining edges and tidy level changes.</span>
+                  </li>
+                  <li>
+                    <i data-lucide="sprout" width="19" height="19" aria-hidden="true"></i>
+                    <span><strong>Landscaping</strong>Turfing, planting plans, trees, shrubs and privacy hedging.</span>
+                  </li>
+                </ul>
+              </article>
+
+              <article id="panel-contact" class="panel" role="tabpanel" aria-labelledby="tab-contact" aria-hidden="true">
+                <p class="kicker">Reach Holdways</p>
+                <h2>Quickest by phone, easy by email.</h2>
+                <a href="tel:+447754274196" class="contact-row">
+                  <i data-lucide="phone" width="19" height="19" aria-hidden="true"></i>
+                  <span><strong>07754 274196</strong>Call to talk through the job or arrange a visit.</span>
+                </a>
+                <a href="mailto:hello@holdways.co.uk?subject=Holdways%20quote%20request" class="contact-row">
+                  <i data-lucide="mail" width="19" height="19" aria-hidden="true"></i>
+                  <span><strong>hello@holdways.co.uk</strong>Useful for photos, measurements and project notes.</span>
+                </a>
+                <a href="https://share.google/PYTV7u9ZlYblenDmI" target="_blank" rel="noopener" class="contact-row">
+                  <i data-lucide="map-pin" width="19" height="19" aria-hidden="true"></i>
+                  <span><strong>Local service area</strong>Open the Google profile for directions, reviews and business details.</span>
+                </a>
+              </article>
+            </div>
+          </div>
+        </section>
+      </div>
+
+    </section>
+  </main>
+
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Project image viewer" aria-hidden="true">
+    <button id="lightboxClose" type="button" class="lightbox-control lightbox-close" aria-label="Close gallery image">
+      <i data-lucide="x" width="22" height="22"></i>
+      <span class="fallback-icon" aria-hidden="true">X</span>
+    </button>
+    <button id="lightboxPrev" type="button" class="lightbox-control lightbox-prev" aria-label="Previous image">
+      <i data-lucide="chevron-left" width="23" height="23"></i>
+      <span class="fallback-icon" aria-hidden="true">&lt;</span>
+    </button>
+    <figure>
+      <img id="lightboxImage" src="" alt="">
+      <figcaption id="lightboxCaption"></figcaption>
+    </figure>
+    <button id="lightboxNext" type="button" class="lightbox-control lightbox-next" aria-label="Next image">
+      <i data-lucide="chevron-right" width="23" height="23"></i>
+      <span class="fallback-icon" aria-hidden="true">&gt;</span>
+    </button>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', function () {
+      var iconPaths = {
+        phone: [["path", {"d": "M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"}]],
+        mail: [["path", {"d": "m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"}], ["rect", {"x": "2", "y": "4", "width": "20", "height": "16", "rx": "2"}]],
+        contact: [["path", {"d": "M16 2v2"}], ["path", {"d": "M7 22v-2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"}], ["path", {"d": "M8 2v2"}], ["circle", {"cx": "12", "cy": "11", "r": "3"}], ["rect", {"x": "3", "y": "4", "width": "18", "height": "18", "rx": "2"}]],
+        expand: [["path", {"d": "m15 15 6 6"}], ["path", {"d": "m15 9 6-6"}], ["path", {"d": "M21 16v5h-5"}], ["path", {"d": "M21 8V3h-5"}], ["path", {"d": "M3 16v5h5"}], ["path", {"d": "m3 21 6-6"}], ["path", {"d": "M3 8V3h5"}], ["path", {"d": "M9 9 3 3"}]],
+        "shield-check": [["path", {"d": "M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"}], ["path", {"d": "m9 12 2 2 4-4"}]],
+        "layers-3": [["path", {"d": "M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"}], ["path", {"d": "M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"}], ["path", {"d": "M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"}]],
+        sprout: [["path", {"d": "M14 9.536V7a4 4 0 0 1 4-4h1.5a.5.5 0 0 1 .5.5V5a4 4 0 0 1-4 4 4 4 0 0 0-4 4c0 2 1 3 1 5a5 5 0 0 1-1 3"}], ["path", {"d": "M4 9a5 5 0 0 1 8 4 5 5 0 0 1-8-4"}], ["path", {"d": "M5 21h14"}]],
+        "map-pin": [["path", {"d": "M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"}], ["circle", {"cx": "12", "cy": "10", "r": "3"}]],
+        x: [["path", {"d": "M18 6 6 18"}], ["path", {"d": "m6 6 12 12"}]],
+        "chevron-left": [["path", {"d": "m15 18-6-6 6-6"}]],
+        "chevron-right": [["path", {"d": "m9 18 6-6-6-6"}]]
+      };
+
+      function createIcons() {
+        var namespace = 'http://www.w3.org/2000/svg';
+        document.querySelectorAll('i[data-lucide]').forEach(function (placeholder) {
+          var name = placeholder.getAttribute('data-lucide');
+          var paths = iconPaths[name];
+          if (!paths) {
+            return;
+          }
+
+          var svg = document.createElementNS(namespace, 'svg');
+          var size = placeholder.getAttribute('width') || placeholder.getAttribute('height') || '24';
+          svg.setAttribute('xmlns', namespace);
+          svg.setAttribute('width', placeholder.getAttribute('width') || size);
+          svg.setAttribute('height', placeholder.getAttribute('height') || size);
+          svg.setAttribute('viewBox', '0 0 24 24');
+          svg.setAttribute('fill', 'none');
+          svg.setAttribute('stroke', 'currentColor');
+          svg.setAttribute('stroke-width', '2');
+          svg.setAttribute('stroke-linecap', 'round');
+          svg.setAttribute('stroke-linejoin', 'round');
+          svg.setAttribute('aria-hidden', 'true');
+          svg.setAttribute('focusable', 'false');
+
+          paths.forEach(function (entry) {
+            var child = document.createElementNS(namespace, entry[0]);
+            Object.keys(entry[1]).forEach(function (key) {
+              child.setAttribute(key, entry[1][key]);
+            });
+            svg.appendChild(child);
+          });
+
+          placeholder.replaceWith(svg);
+        });
+        document.documentElement.classList.add('has-lucide');
+      }
+
+      createIcons();
+
+      var card = document.querySelector('.business-card');
+      var toast = document.getElementById('toast');
+      var saveContact = document.getElementById('saveContact');
+      var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
+      var panels = Array.prototype.slice.call(document.querySelectorAll('.panel'));
+      var thumbsContainer = document.getElementById('thumbs');
+      var thumbPrev = document.getElementById('thumbPrev');
+      var thumbNext = document.getElementById('thumbNext');
+      var featureButton = document.getElementById('featureButton');
+      var featureImage = document.getElementById('featureImage');
+      var featureCaption = document.getElementById('featureCaption');
+      var lightbox = document.getElementById('lightbox');
+      var lightboxImage = document.getElementById('lightboxImage');
+      var lightboxCaption = document.getElementById('lightboxCaption');
+      var lightboxClose = document.getElementById('lightboxClose');
+      var lightboxPrev = document.getElementById('lightboxPrev');
+      var lightboxNext = document.getElementById('lightboxNext');
+      var activeImageIndex = 0;
+      var thumbStart = 0;
+      var visibleThumbs = 4;
+      var previousFocus = null;
+      var toastTimer = null;
+      var photos = [
+        { image: 'HERO.JPG', caption: 'Fencing and garden finish' },
+        { image: 'IMG_0836.JPG', caption: 'Closeboard, turf and paving' },
+        { image: 'bespokefence.JPG', caption: 'Bespoke fencing and level change' },
+        { image: 'ket.JPG', caption: 'Garden design and fencing' },
+        { image: 'IMG_0524.JPG', caption: 'Patio and paving' },
+        { image: 'IMG_0837.JPG', caption: 'Fencing, paving and turf' },
+        { image: 'IMG_1970.JPG', caption: 'Turfing with fence and shed' },
+        { image: 'IMG_0637.JPG', caption: 'Replace stone with turf' },
+        { image: 'IMG_0493.JPG', caption: 'Privacy hedging' },
+        { image: 'IMG_0316.JPG', caption: 'Planting plans and shrubs' },
+        { image: 'IMG_0317.JPG', caption: 'Garden planting detail' },
+        { image: 'IMG_0318.JPG', caption: 'Finished planting bed' },
+        { image: 'IMG_2021.JPG', caption: 'Retaining concrete fence' },
+        { image: 'IMG_1345.JPG', caption: 'Closeboard panel concrete fencing' },
+        { image: 'IMG_1973.JPG', caption: 'Fencing and turf' },
+        { image: 'IMG_2407.JPG', caption: 'Bespoke fencing level change' },
+        { image: 'IMG_2167.JPG', caption: 'Tree planting with fence' },
+        { image: 'concretef.JPG', caption: 'Concrete fencing' },
+        { image: 'IMG_2191.JPG', caption: 'Sleeper beds' },
+        { image: 'IMG_2139.JPG', caption: 'Shed building with base' },
+        { image: 'IMG_2460.JPG', caption: 'Retaining boundary concrete fence' },
+        { image: 'IMG_1932.JPG', caption: 'Boundary fencing' },
+        { image: 'IMG_0827.JPG', caption: 'Land drains for wet gardens' },
+        { image: 'IMG_1890.JPG', caption: 'Full garden prep and turf' },
+        { image: 'IMG_1927.JPG', caption: 'CBD into concrete fence' },
+        { image: 'IMG_2109.JPG', caption: 'Full garden turf' },
+        { image: 'IMG_2499.JPG', caption: 'Privacy hedging' },
+        { image: 'IMG_2515.JPG', caption: 'Sleepers with full garden turf' },
+        { image: 'IMG_2116.JPG', caption: 'Fencing and garden prep' },
+        { image: 'IMG_2637.JPG', caption: 'Close-off with gate install' },
+        { image: 'IMG_0086.JPG', caption: 'Ground preparation and paths' },
+        { image: 'IMG_3096.JPG', caption: 'Front garden landscaping' }
+      ];
+
+      function showToast(message) {
+        clearTimeout(toastTimer);
+        toast.textContent = message;
+        toast.classList.add('is-visible');
+        toastTimer = setTimeout(function () {
+          toast.classList.remove('is-visible');
+        }, 2200);
+      }
+
+      function setPanel(name) {
+        tabs.forEach(function (tab) {
+          var selected = tab.dataset.panel === name;
+          tab.setAttribute('aria-selected', String(selected));
+        });
+
+        panels.forEach(function (panel) {
+          var active = panel.id === 'panel-' + name;
+          panel.classList.toggle('is-active', active);
+          panel.setAttribute('aria-hidden', String(!active));
+        });
+      }
+
+      function getVisiblePhotoIndexes() {
+        var indexes = [];
+        for (var offset = 0; offset < Math.min(visibleThumbs, photos.length); offset += 1) {
+          indexes.push((thumbStart + offset) % photos.length);
+        }
+        return indexes;
+      }
+
+      function renderThumbs() {
+        thumbsContainer.innerHTML = '';
+        getVisiblePhotoIndexes().forEach(function (photoIndex) {
+          var photo = photos[photoIndex];
+          var button = document.createElement('button');
+          var image = document.createElement('img');
+
+          button.type = 'button';
+          button.className = 'thumb' + (photoIndex === activeImageIndex ? ' is-active' : '');
+          button.setAttribute('aria-label', 'Show ' + photo.caption.toLowerCase());
+          button.dataset.index = String(photoIndex);
+          image.src = photo.image;
+          image.alt = '';
+          image.loading = photoIndex < visibleThumbs ? 'eager' : 'lazy';
+          image.decoding = 'async';
+          button.appendChild(image);
+          button.addEventListener('click', function () {
+            setFeature(photoIndex);
+          });
+          thumbsContainer.appendChild(button);
+        });
+      }
+
+      function ensureActiveThumbVisible() {
+        var visible = getVisiblePhotoIndexes();
+        if (visible.indexOf(activeImageIndex) === -1) {
+          thumbStart = activeImageIndex;
+        }
+      }
+
+      function setFeature(index) {
+        var photo = photos[index];
+        activeImageIndex = index;
+        featureImage.src = photo.image;
+        featureImage.alt = photo.caption;
+        featureCaption.textContent = photo.caption;
+        ensureActiveThumbVisible();
+        renderThumbs();
+      }
+
+      function showLightboxImage(index) {
+        setFeature(index);
+        lightboxImage.src = photos[index].image;
+        lightboxImage.alt = photos[index].caption;
+        lightboxCaption.textContent = photos[index].caption;
+      }
+
+      function openLightbox(index) {
+        previousFocus = document.activeElement;
+        showLightboxImage(index);
+        lightbox.classList.add('is-open');
+        lightbox.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        lightboxClose.focus();
+      }
+
+      function closeLightbox() {
+        lightbox.classList.remove('is-open');
+        lightbox.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        lightboxImage.src = '';
+        if (previousFocus) {
+          previousFocus.focus();
+        }
+      }
+
+      function nextImage() {
+        showLightboxImage((activeImageIndex + 1) % photos.length);
+      }
+
+      function prevImage() {
+        showLightboxImage((activeImageIndex - 1 + photos.length) % photos.length);
+      }
+
+      function shiftThumbs(direction) {
+        var nextIndex = (activeImageIndex + direction + photos.length) % photos.length;
+        thumbStart = (thumbStart + direction + photos.length) % photos.length;
+        setFeature(nextIndex);
+      }
+
+      tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          setPanel(tab.dataset.panel);
+        });
+
+        tab.addEventListener('keydown', function (event) {
+          var index = tabs.indexOf(tab);
+          if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+            event.preventDefault();
+            var nextIndex = event.key === 'ArrowRight'
+              ? (index + 1) % tabs.length
+              : (index - 1 + tabs.length) % tabs.length;
+            tabs[nextIndex].focus();
+            setPanel(tabs[nextIndex].dataset.panel);
+          }
+        });
+      });
+
+      renderThumbs();
+
+      thumbPrev.addEventListener('click', function () {
+        shiftThumbs(-1);
+      });
+
+      thumbNext.addEventListener('click', function () {
+        shiftThumbs(1);
+      });
+
+      featureButton.addEventListener('click', function () {
+        openLightbox(activeImageIndex);
+      });
+
+      lightboxClose.addEventListener('click', closeLightbox);
+      lightboxNext.addEventListener('click', nextImage);
+      lightboxPrev.addEventListener('click', prevImage);
+
+      lightbox.addEventListener('click', function (event) {
+        if (event.target === lightbox) {
+          closeLightbox();
+        }
+      });
+
+      document.addEventListener('keydown', function (event) {
+        if (!lightbox.classList.contains('is-open')) {
+          return;
+        }
+
+        if (event.key === 'Escape') {
+          closeLightbox();
+        }
+
+        if (event.key === 'ArrowRight') {
+          nextImage();
+        }
+
+        if (event.key === 'ArrowLeft') {
+          prevImage();
+        }
+      });
+
+      saveContact.addEventListener('click', function () {
+        var vcard = [
+          'BEGIN:VCARD',
+          'VERSION:3.0',
+          'FN:Holdways',
+          'ORG:Holdways',
+          'N:Holdways;;;',
+          'TEL;TYPE=CELL:+447754274196',
+          'EMAIL:hello@holdways.co.uk',
+          'URL:https://share.google/PYTV7u9ZlYblenDmI',
+          'NOTE:Fencing, gates, turfing, sleeper beds, decking, pergolas and planting.',
+          'END:VCARD'
+        ].join('\n');
+        var blob = new Blob([vcard], { type: 'text/vcard' });
+        var url = URL.createObjectURL(blob);
+        var link = document.createElement('a');
+        link.href = url;
+        link.download = 'holdways.vcf';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        showToast('Contact card downloaded');
+      });
+
+      if (card && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        card.addEventListener('pointermove', function (event) {
+          if (window.innerWidth < 941) {
+            return;
+          }
+
+          var rect = card.getBoundingClientRect();
+          var x = (event.clientX - rect.left) / rect.width - 0.5;
+          var y = (event.clientY - rect.top) / rect.height - 0.5;
+          card.style.setProperty('--tilt-x', (x * 2.1).toFixed(2) + 'deg');
+          card.style.setProperty('--tilt-y', (y * -1.6).toFixed(2) + 'deg');
+        });
+
+        card.addEventListener('pointerleave', function () {
+          card.style.setProperty('--tilt-x', '0deg');
+          card.style.setProperty('--tilt-y', '0deg');
+        });
+      }
+    });
+  </script>
+</body>
+</html>
