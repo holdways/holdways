@@ -937,31 +937,65 @@
     }
 
     @media (max-width: 620px) {
+      body {
+        background: var(--paper);
+      }
+
       .stage {
-        padding: 0.5rem;
+        display: block;
+        min-height: 100svh;
+        padding: 0;
       }
 
       .business-card {
-        border-radius: 14px;
+        width: 100%;
+        min-height: 100svh;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        backdrop-filter: none;
       }
 
       .card-top {
-        align-items: flex-start;
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        align-items: stretch;
         flex-direction: column;
-        padding: 0.75rem 0.9rem;
+        gap: 0.65rem;
+        background: var(--card-solid);
+        padding: 0.65rem 0.75rem 0.7rem;
       }
 
       .brand img {
-        width: min(188px, 60vw);
+        width: min(168px, 54vw);
       }
 
       .small-controls {
         width: 100%;
+        flex-wrap: nowrap;
         justify-content: flex-start;
+        gap: 0.3rem;
+        margin-inline: -0.1rem;
+        overflow-x: auto;
+        padding: 0.1rem 0.1rem 0.25rem;
+        scrollbar-width: none;
+      }
+
+      .small-controls::-webkit-scrollbar {
+        display: none;
+      }
+
+      .tab {
+        flex: 0 0 auto;
+        min-height: 2.4rem;
+        padding: 0.55rem 0.62rem;
+        font-size: 0.75rem;
+        white-space: nowrap;
       }
 
       .card-body {
-        padding: 0.75rem;
+        padding: 0.9rem 1rem 1rem;
       }
 
       .gallery-head {
@@ -1017,7 +1051,24 @@
       }
 
       .feature-button {
-        height: clamp(235px, 68vw, 300px);
+        height: clamp(220px, 64vw, 285px);
+        border-radius: 12px;
+      }
+
+      .photo-note {
+        left: 0.6rem;
+        right: 0.6rem;
+        bottom: 0.6rem;
+        padding: 0.5rem 0.6rem 0.5rem 0.7rem;
+      }
+
+      .thumb-strip {
+        gap: 0.3rem;
+      }
+
+      .thumb-arrow {
+        width: 1.85rem;
+        height: 2.35rem;
       }
 
       #page-contact {
@@ -1061,11 +1112,17 @@
       }
 
       .contact-box {
+        width: 100%;
         padding: 0.75rem;
       }
 
       .thumbs {
         grid-template-columns: repeat(4, 1fr);
+        gap: 0.35rem;
+      }
+
+      .social-footer {
+        padding: 0.75rem 1rem max(0.9rem, env(safe-area-inset-bottom));
       }
 
       .lightbox-prev,
