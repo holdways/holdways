@@ -232,6 +232,10 @@
       visibility: visible;
     }
 
+    .page:not(.is-active) {
+      display: none;
+    }
+
     .split-layout {
       min-height: 0;
       display: grid;
@@ -884,7 +888,8 @@
 
     @media (max-width: 940px) {
       body {
-        background-attachment: scroll;
+        background:
+          linear-gradient(115deg, rgba(238, 241, 236, 0.96), rgba(232, 228, 218, 0.9) 42%, rgba(215, 224, 221, 0.92));
       }
 
       .stage {
@@ -892,6 +897,7 @@
       }
 
       .business-card {
+        width: 100%;
         max-height: none;
       }
 
@@ -906,6 +912,7 @@
 
       .split-layout {
         grid-template-columns: 1fr;
+        align-items: start;
       }
 
       .feature-button {
@@ -919,6 +926,11 @@
 
       .service-map {
         min-height: 280px;
+      }
+
+      html.ink body {
+        background:
+          linear-gradient(115deg, rgba(15, 19, 16, 0.96), rgba(32, 38, 33, 0.9) 48%, rgba(20, 28, 31, 0.94));
       }
     }
 
@@ -948,6 +960,10 @@
 
       .card-body {
         padding: 0.75rem;
+      }
+
+      .gallery-head {
+        align-items: start;
       }
 
       .eyebrow {
@@ -1001,6 +1017,8 @@
 
       .gallery-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+        overflow: visible;
+        padding-right: 0;
       }
 
       .gallery-item {
@@ -1561,10 +1579,13 @@
           button.className = 'thumb' + (photoIndex === activeImageIndex ? ' is-active' : '');
           button.setAttribute('aria-label', 'Show ' + photo.caption.toLowerCase());
           button.dataset.index = String(photoIndex);
-          image.src = photo.image;
           image.alt = '';
           image.loading = photoIndex < visibleThumbs ? 'eager' : 'lazy';
           image.decoding = 'async';
+          image.addEventListener('error', function () {
+            image.src = photo.image;
+          }, { once: true });
+          image.src = getThumbPath(photo.image);
           button.appendChild(image);
           button.addEventListener('click', function () {
             setFeature(photoIndex);
