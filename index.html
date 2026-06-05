@@ -1215,7 +1215,7 @@
           <section class="pocket" aria-label="Project photographs">
             <div class="photo-panel">
               <button id="featureButton" type="button" class="feature-button" aria-label="Open selected project photograph">
-                <img id="featureImage" src="HERO.JPG" alt="Finished fencing and landscaping project by Holdways" fetchpriority="high" decoding="async">
+                <img id="featureImage" src="HERO.JPG" alt="Finished fencing and landscaping project by Holdways" fetchpriority="high" decoding="sync">
                 <span class="photo-note">
                   <span id="featureCaption">Fencing and garden finish</span>
                   <i data-lucide="expand" width="17" height="17" aria-hidden="true"></i>
@@ -1574,8 +1574,6 @@
       var previousFocus = null;
       var toastTimer = null;
       var galleryRendered = false;
-      var slideshowTimer = null;
-      var slideshowDelay = 5200;
       var featureFadeTimer = null;
       var photos = [
         { image: 'HERO.JPG', caption: 'Fencing and garden finish' },
@@ -1747,38 +1745,6 @@
         }, 180);
       }
 
-      function getRandomPhotoIndex() {
-        if (photos.length < 2) {
-          return activeImageIndex;
-        }
-
-        var nextIndex = activeImageIndex;
-        while (nextIndex === activeImageIndex) {
-          nextIndex = Math.floor(Math.random() * photos.length);
-        }
-        return nextIndex;
-      }
-
-      function showRandomFeature() {
-        if (lightbox.classList.contains('is-open')) {
-          return;
-        }
-        fadeToFeature(getRandomPhotoIndex());
-      }
-
-      function startSlideshow() {
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-          return;
-        }
-        clearInterval(slideshowTimer);
-        slideshowTimer = setInterval(showRandomFeature, slideshowDelay);
-      }
-
-      function pauseSlideshow() {
-        clearInterval(slideshowTimer);
-        slideshowTimer = null;
-      }
-
       function showLightboxImage(index) {
         setFeature(index);
         lightboxImage.src = photos[index].image;
@@ -1787,7 +1753,6 @@
       }
 
       function openLightbox(index) {
-        pauseSlideshow();
         previousFocus = document.activeElement;
         showLightboxImage(index);
         lightbox.classList.add('is-open');
@@ -1804,7 +1769,6 @@
         if (previousFocus) {
           previousFocus.focus();
         }
-        startSlideshow();
       }
 
       function nextImage() {
@@ -1854,19 +1818,15 @@
 
       thumbPrev.addEventListener('click', function () {
         shiftThumbs(-1);
-        startSlideshow();
       });
 
       thumbNext.addEventListener('click', function () {
         shiftThumbs(1);
-        startSlideshow();
       });
 
       featureButton.addEventListener('click', function () {
         openLightbox(activeImageIndex);
       });
-
-      startSlideshow();
 
       lightboxClose.addEventListener('click', closeLightbox);
       lightboxNext.addEventListener('click', nextImage);
