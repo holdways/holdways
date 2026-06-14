@@ -902,8 +902,7 @@
       }
 
       .card-body {
-        overflow-x: hidden;
-        overflow-y: visible;
+        overflow: visible;
       }
 
       .identity {
@@ -995,6 +994,10 @@
 
       .card-body {
         padding: 0.65rem 0.85rem 0.75rem;
+      }
+
+      .page {
+        overflow: visible;
       }
 
       .gallery-head {
@@ -1662,6 +1665,20 @@
 
         if (name === 'gallery') {
           renderGallery();
+        }
+
+        if (window.innerWidth <= 620) {
+          requestAnimationFrame(function () {
+            var cardBody = document.querySelector('.card-body');
+            var activePage = document.querySelector('.page.is-active');
+            if (cardBody) {
+              cardBody.scrollTop = 0;
+            }
+            if (activePage) {
+              activePage.scrollTop = 0;
+            }
+            window.scrollTo(0, 0);
+          });
         }
       }
 
