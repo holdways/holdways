@@ -948,6 +948,8 @@
 
       .business-card {
         width: 100%;
+        display: block;
+        overflow: visible;
         border: 0;
         border-radius: 0;
         box-shadow: none;
@@ -993,11 +995,19 @@
       }
 
       .card-body {
+        display: block;
         padding: 0.65rem 0.85rem 0.75rem;
       }
 
       .page {
+        grid-area: auto;
         overflow: visible;
+      }
+
+      .page.is-active.split-layout,
+      .page.is-active.gallery-page {
+        display: grid;
+        align-content: start;
       }
 
       .gallery-head {
@@ -1024,6 +1034,7 @@
 
       .identity,
       .page-copy {
+        justify-content: flex-start;
         gap: 0.65rem;
       }
 
