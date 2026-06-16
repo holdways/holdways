@@ -70,7 +70,7 @@
       overflow-x: hidden;
       background:
         linear-gradient(115deg, rgba(238, 241, 236, 0.92), rgba(232, 228, 218, 0.84) 42%, rgba(215, 224, 221, 0.86)),
-        url("HERO.JPG") center / cover fixed;
+        url("thumbs/HERO.JPG") center / cover fixed;
       color: var(--ink);
       font-family: var(--sans);
       letter-spacing: 0;
@@ -79,7 +79,7 @@
     html.ink body {
       background:
         linear-gradient(115deg, rgba(15, 19, 16, 0.92), rgba(32, 38, 33, 0.84) 48%, rgba(20, 28, 31, 0.9)),
-        url("HERO.JPG") center / cover fixed;
+        url("thumbs/HERO.JPG") center / cover fixed;
     }
 
     body::before {
@@ -141,9 +141,16 @@
       padding: clamp(0.75rem, 2.5vw, 2rem);
     }
 
+    @supports (height: 100dvh) {
+      .stage {
+        min-height: 100dvh;
+      }
+    }
+
     .business-card {
       width: min(1240px, 100%);
-      max-height: calc(100svh - clamp(1.5rem, 5vw, 4rem));
+      height: min(760px, calc(100svh - clamp(1.5rem, 5vw, 4rem)));
+      min-height: 0;
       display: grid;
       grid-template-rows: auto minmax(0, 1fr) auto;
       overflow: hidden;
@@ -156,12 +163,19 @@
       transition: transform 220ms ease, background-color 220ms ease;
     }
 
+    @supports (height: 100dvh) {
+      .business-card {
+        height: min(760px, calc(100dvh - clamp(1.5rem, 5vw, 4rem)));
+      }
+    }
+
     .card-top {
-      display: flex;
+      display: grid;
+      grid-template-columns: minmax(170px, auto) minmax(0, 1fr);
       align-items: center;
       justify-content: space-between;
       gap: 1rem;
-      padding: 1rem clamp(1rem, 2.4vw, 1.6rem);
+      padding: 0.78rem clamp(1rem, 2.4vw, 1.55rem);
     }
 
     .card-top {
@@ -173,20 +187,29 @@
       min-width: 0;
       align-items: center;
       gap: 0.85rem;
+      align-self: stretch;
+      border-right: 1px solid var(--line);
       color: var(--ink);
+      padding-right: clamp(1rem, 2.2vw, 1.55rem);
       text-decoration: none;
     }
 
     .brand img {
-      width: min(263px, 65vw);
+      width: clamp(176px, 20vw, 224px);
       height: auto;
     }
 
     .small-controls {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, auto));
+      align-items: center;
       justify-content: flex-end;
-      gap: 0.55rem;
+      gap: 0.15rem;
+      justify-self: end;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--card-solid) 72%, transparent);
+      padding: 0.22rem;
     }
 
     .link-button,
@@ -270,7 +293,7 @@
       margin: 0;
       color: var(--ink);
       font-family: var(--serif);
-      font-size: clamp(2.55rem, 5.1vw, 4.35rem);
+      font-size: clamp(2.35rem, 4.75vw, 4.05rem);
       font-weight: 430;
       line-height: 0.96;
       text-wrap: balance;
@@ -558,18 +581,20 @@
     }
 
     .tab {
-      border: 1px solid var(--line);
+      min-width: 0;
+      border: 0;
       border-radius: 999px;
       background: transparent;
       color: var(--muted);
       padding: 0.57rem 0.82rem;
       font-size: 0.78rem;
       font-weight: 800;
+      text-align: center;
+      white-space: nowrap;
       transition: background 170ms ease, border-color 170ms ease, color 170ms ease;
     }
 
     .tab[aria-selected="true"] {
-      border-color: transparent;
       background: var(--ink);
       color: var(--card-solid);
     }
@@ -591,7 +616,7 @@
     .service-map {
       position: relative;
       display: grid;
-      min-height: 360px;
+      min-height: 330px;
       overflow: hidden;
       grid-template-rows: auto minmax(0, 1fr) auto;
       gap: 0.7rem;
@@ -711,13 +736,23 @@
 
     .service-grid {
       display: grid;
-      gap: 0.55rem;
+      gap: 0.62rem;
       margin: 0;
       padding: 0;
       list-style: none;
     }
 
-    .service-grid li,
+    .service-grid li {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 0.72rem;
+      align-items: start;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: color-mix(in srgb, var(--card-solid) 64%, transparent);
+      padding: 0.74rem;
+    }
+
     .contact-row {
       display: grid;
       grid-template-columns: auto minmax(0, 1fr);
@@ -746,6 +781,16 @@
       color: var(--muted);
       font-size: 0.86rem;
       line-height: 1.55;
+    }
+
+    #page-work .page-copy h2 {
+      max-width: 9.5em;
+      font-size: clamp(2.05rem, 3.7vw, 3.28rem);
+      line-height: 1;
+    }
+
+    #page-work .intro {
+      max-width: 31rem;
     }
 
     .contact-row {
@@ -898,10 +943,15 @@
 
       .business-card {
         width: 100%;
-        max-height: none;
+        height: auto;
+        min-height: calc(100svh - clamp(1.5rem, 5vw, 4rem));
       }
 
       .card-body {
+        overflow: visible;
+      }
+
+      .page {
         overflow: visible;
       }
 
@@ -937,48 +987,63 @@
 
     @media (max-width: 620px) {
       body {
+        min-height: 100svh;
+        overflow: hidden;
         background: var(--paper);
       }
 
       .stage {
-        display: block;
+        display: grid;
         min-height: 100svh;
-        padding: 0;
+        height: 100svh;
+        place-items: stretch;
+        padding: 0.55rem;
       }
 
       .business-card {
         width: 100%;
-        display: block;
-        overflow: visible;
-        border: 0;
-        border-radius: 0;
-        box-shadow: none;
+        height: 100%;
+        min-height: 0;
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr) auto;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: var(--card-solid);
+        box-shadow: 0 16px 42px rgba(35, 39, 31, 0.16);
         backdrop-filter: none;
       }
 
       .card-top {
-        position: sticky;
-        top: 0;
+        position: relative;
         z-index: 20;
-        align-items: stretch;
-        flex-direction: column;
-        gap: 0.45rem;
+        grid-template-columns: 1fr;
+        align-items: center;
+        gap: 0.55rem;
         background: var(--card-solid);
-        padding: 0.5rem 0.75rem 0.55rem;
+        padding: 0.65rem 0.7rem 0.6rem;
+      }
+
+      .brand {
+        justify-content: center;
+        align-self: auto;
+        border-right: 0;
+        padding-right: 0;
       }
 
       .brand img {
-        width: min(142px, 46vw);
+        width: min(168px, 54vw);
       }
 
       .small-controls {
         width: 100%;
-        flex-wrap: nowrap;
-        justify-content: flex-start;
-        gap: 0.3rem;
-        margin-inline: -0.1rem;
-        overflow-x: auto;
-        padding: 0.05rem 0.1rem 0.15rem;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        justify-content: stretch;
+        justify-self: stretch;
+        gap: 0.15rem;
+        margin: 0;
+        overflow: visible;
+        padding: 0.2rem;
         scrollbar-width: none;
       }
 
@@ -987,27 +1052,37 @@
       }
 
       .tab {
-        flex: 0 0 auto;
+        width: 100%;
         min-height: 2.05rem;
-        padding: 0.42rem 0.55rem;
-        font-size: 0.72rem;
+        overflow: hidden;
+        padding: 0.42rem 0.18rem;
+        font-size: clamp(0.64rem, 2.55vw, 0.72rem);
+        text-overflow: ellipsis;
         white-space: nowrap;
       }
 
       .card-body {
-        display: block;
-        padding: 0.65rem 0.85rem 0.75rem;
+        display: grid;
+        min-height: 0;
+        overflow: hidden;
+        padding: 0.7rem 0.78rem 0.75rem;
       }
 
       .page {
-        grid-area: auto;
-        overflow: visible;
+        grid-area: 1 / 1;
+        height: 100%;
+        min-height: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+        padding-right: 0.1rem;
+        scrollbar-width: thin;
       }
 
       .page.is-active.split-layout,
       .page.is-active.gallery-page {
         display: grid;
         align-content: start;
+        gap: 0.85rem;
       }
 
       .gallery-head {
@@ -1036,6 +1111,12 @@
       .page-copy {
         justify-content: flex-start;
         gap: 0.65rem;
+        min-height: auto;
+      }
+
+      #page-work .page-copy h2 {
+        max-width: 11em;
+        font-size: clamp(1.86rem, 8vw, 2.35rem);
       }
 
       .pocket {
@@ -1044,7 +1125,7 @@
 
       .actions {
         display: grid;
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 0.55rem;
       }
 
@@ -1056,7 +1137,7 @@
       }
 
       .link-button.primary {
-        grid-column: 1 / -1;
+        grid-column: auto;
       }
 
       .quiet-list {
@@ -1167,15 +1248,44 @@
 
     @media (max-height: 720px) and (min-width: 941px) {
       .business-card {
-        max-height: none;
+        height: calc(100svh - 1.5rem);
       }
 
       .stage {
-        place-items: start center;
+        padding: 0.75rem;
+      }
+
+      .card-top {
+        padding-block: 0.58rem;
+      }
+
+      .brand img {
+        width: clamp(160px, 17vw, 200px);
+      }
+
+      h1,
+      .page-copy h2,
+      .gallery-head h2 {
+        font-size: clamp(2.1rem, 4.1vw, 3.55rem);
       }
 
       .feature-button {
-        min-height: 230px;
+        height: clamp(260px, 48svh, 360px);
+        min-height: 0;
+        aspect-ratio: auto;
+      }
+    }
+
+    @media (max-width: 620px) {
+      @supports (height: 100dvh) {
+        body {
+          min-height: 100dvh;
+        }
+
+        .stage {
+          min-height: 100dvh;
+          height: 100dvh;
+        }
       }
     }
 
@@ -1223,7 +1333,7 @@
           <button id="tab-note" type="button" class="tab" role="tab" aria-selected="true" aria-controls="page-note" data-panel="note">Home</button>
           <button id="tab-work" type="button" class="tab" role="tab" aria-selected="false" aria-controls="page-work" data-panel="work">What we do</button>
           <button id="tab-gallery" type="button" class="tab" role="tab" aria-selected="false" aria-controls="page-gallery" data-panel="gallery">Gallery</button>
-          <button id="tab-contact" type="button" class="tab" role="tab" aria-selected="false" aria-controls="page-contact" data-panel="contact">Get in touch</button>
+          <button id="tab-contact" type="button" class="tab" role="tab" aria-selected="false" aria-controls="page-contact" data-panel="contact">Contact</button>
         </div>
       </header>
 
@@ -1241,6 +1351,10 @@
                   <i data-lucide="images" width="18" height="18"></i>
                   View gallery
                 </button>
+                <button type="button" class="link-button" data-open-panel="contact">
+                  <i data-lucide="phone" width="18" height="18"></i>
+                  Get in touch
+                </button>
               </div>
             </div>
           </section>
@@ -1248,7 +1362,7 @@
           <section class="pocket" aria-label="Project photographs">
             <div class="photo-panel">
               <button id="featureButton" type="button" class="feature-button" aria-label="Open selected project photograph">
-                <img id="featureImage" src="HERO.JPG" alt="Finished fencing and landscaping project by Holdways" fetchpriority="high" decoding="sync">
+                <img id="featureImage" src="thumbs/HERO.JPG" data-full-src="HERO.JPG" alt="Finished fencing and landscaping project by Holdways" fetchpriority="high" decoding="async">
                 <span class="photo-note">
                   <span id="featureCaption">Fencing and garden finish</span>
                   <i data-lucide="expand" width="17" height="17" aria-hidden="true"></i>
@@ -1282,8 +1396,9 @@
         <section id="page-work" class="page split-layout" role="tabpanel" aria-labelledby="tab-work" aria-hidden="true">
           <div class="page-copy">
             <div>
-              <h2>Secure Boundaries. Stunning Landscapes.</h2>
-              <p class="intro">We handle the practical structure of outdoor spaces, from strong boundaries to tidy levels, planting and usable garden finishes.</p>
+              <p class="eyebrow">What we do</p>
+              <h2>Fencing, landscaping and garden structure.</h2>
+              <p class="intro">Practical outdoor work with tidy edges, solid materials and a finish that looks settled from day one.</p>
             </div>
 
             <div>
@@ -1678,19 +1793,22 @@
           renderGallery();
         }
 
-        if (window.innerWidth <= 620) {
-          requestAnimationFrame(function () {
-            var cardBody = document.querySelector('.card-body');
-            var activePage = document.querySelector('.page.is-active');
-            if (cardBody) {
-              cardBody.scrollTop = 0;
-            }
-            if (activePage) {
-              activePage.scrollTop = 0;
-            }
-            window.scrollTo(0, 0);
-          });
+        resetPanelScroll();
+        requestAnimationFrame(resetPanelScroll);
+      }
+
+      function resetPanelScroll() {
+        var cardBody = document.querySelector('.card-body');
+        var activePage = document.querySelector('.page.is-active');
+        if (cardBody) {
+          cardBody.scrollTop = 0;
         }
+        if (activePage) {
+          activePage.scrollTop = 0;
+        }
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+        window.scrollTo(0, 0);
       }
 
       function getVisiblePhotoIndexes() {
@@ -1731,6 +1849,10 @@
         return 'thumbs/' + imagePath;
       }
 
+      function getPreviewPath(imagePath) {
+        return getThumbPath(imagePath);
+      }
+
       function renderGallery() {
         if (galleryRendered) {
           return;
@@ -1769,12 +1891,20 @@
       function setFeature(index) {
         var photo = photos[index];
         activeImageIndex = index;
-        featureImage.src = photo.image;
+        featureImage.dataset.fullSrc = photo.image;
+        featureImage.src = getPreviewPath(photo.image);
         featureImage.alt = photo.caption;
         featureCaption.textContent = photo.caption;
         ensureActiveThumbVisible();
         renderThumbs();
       }
+
+      featureImage.addEventListener('error', function () {
+        var fullSrc = featureImage.dataset.fullSrc;
+        if (fullSrc && featureImage.getAttribute('src') !== fullSrc) {
+          featureImage.src = fullSrc;
+        }
+      });
 
       function fadeToFeature(index) {
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
