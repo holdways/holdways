@@ -531,10 +531,10 @@
     }
 
     .gallery-head {
-      display: flex;
-      align-items: start;
-      justify-content: space-between;
-      gap: 1rem;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 0.72fr);
+      align-items: end;
+      gap: clamp(0.85rem, 1.8vw, 1.2rem);
     }
 
     .gallery-head > div {
@@ -542,19 +542,41 @@
       min-width: 0;
     }
 
-    .gallery-page .gallery-head h2,
-    .gallery-page .gallery-head .intro {
-      max-width: none;
+    .gallery-page .gallery-head h2 {
+      max-width: 10.2em;
     }
 
-    .gallery-page .gallery-head h2 {
-      font-size: clamp(2.35rem, 4.15vw, 3.45rem);
-      line-height: 1.02;
-      text-wrap: normal;
+    .gallery-page .gallery-head .intro {
+      max-width: 35rem;
     }
 
     .gallery-head .intro {
       margin-top: 0.55rem;
+    }
+
+    .gallery-lead {
+      position: relative;
+      width: 100%;
+      min-height: clamp(180px, 18vw, 245px);
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #1f271f;
+      padding: 0;
+      box-shadow: 0 8px 20px rgba(35, 39, 31, 0.1);
+    }
+
+    .gallery-lead img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 360ms ease, filter 360ms ease;
+    }
+
+    .gallery-lead:hover img,
+    .gallery-lead:focus-visible img {
+      transform: scale(1.035);
+      filter: saturate(1.03);
     }
 
     .gallery-grid {
@@ -954,6 +976,14 @@
       .split-layout {
         grid-template-columns: 1fr;
         align-items: start;
+      }
+
+      .gallery-head {
+        grid-template-columns: 1fr;
+      }
+
+      .gallery-lead {
+        min-height: clamp(170px, 44vw, 260px);
       }
 
       .feature-button {
@@ -1370,9 +1400,12 @@
         <section id="page-gallery" class="page gallery-page" role="tabpanel" aria-labelledby="tab-gallery" aria-hidden="true">
           <div class="gallery-head">
             <div>
-              <h2>Transformed spaces, lasting joy in every shot.</h2>
+              <h2>Transformed spaces,<br>lasting joy in every shot.</h2>
               <p class="intro">We take pride in the quality of our work. Have a look through some of our previous jobs, you may even get some inspiration!</p>
             </div>
+            <button id="galleryLead" type="button" class="gallery-lead" aria-label="Open fencing and garden finish">
+              <img id="galleryLeadImage" src="thumbs/HERO.JPG" alt="Fencing and garden finish" loading="eager" decoding="async">
+            </button>
           </div>
 
           <div id="galleryGrid" class="gallery-grid" aria-label="All project photographs"></div>
@@ -1689,6 +1722,8 @@
       var panelTriggers = Array.prototype.slice.call(document.querySelectorAll('[data-open-panel]'));
       var thumbsContainer = document.getElementById('thumbs');
       var galleryGrid = document.getElementById('galleryGrid');
+      var galleryLead = document.getElementById('galleryLead');
+      var galleryLeadImage = document.getElementById('galleryLeadImage');
       var thumbPrev = document.getElementById('thumbPrev');
       var thumbNext = document.getElementById('thumbNext');
       var featureButton = document.getElementById('featureButton');
@@ -1875,6 +1910,9 @@
         }
         galleryGrid.innerHTML = '';
         photos.forEach(function (photo, photoIndex) {
+          if (photoIndex === 0) {
+            return;
+          }
           var previewSrc = getThumbPath(photo.image);
           var button = document.createElement('button');
           var image = document.createElement('img');
@@ -1897,6 +1935,18 @@
           galleryGrid.appendChild(button);
         });
         galleryRendered = true;
+      }
+
+      function renderGalleryLead() {
+        var photo = photos[0];
+        var previewSrc = getThumbPath(photo.image);
+        galleryLead.setAttribute('aria-label', 'Open ' + photo.caption.toLowerCase());
+        galleryLeadImage.alt = photo.caption;
+        galleryLeadImage.addEventListener('error', function () {
+          galleryLeadImage.src = photo.image;
+        }, { once: true });
+        preloadImage(previewSrc);
+        galleryLeadImage.src = previewSrc;
       }
 
       function ensureActiveThumbVisible() {
@@ -2039,6 +2089,7 @@
       });
 
       preloadGalleryPreviews();
+      renderGalleryLead();
       setFeature(activeImageIndex);
 
       panelTriggers.forEach(function (trigger) {
@@ -2050,6 +2101,10 @@
             tab.focus();
           }
         });
+      });
+
+      galleryLead.addEventListener('click', function () {
+        openLightbox(0);
       });
 
       thumbPrev.addEventListener('click', function () {
