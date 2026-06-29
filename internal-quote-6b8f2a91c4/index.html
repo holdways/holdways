@@ -1650,20 +1650,21 @@
       setText(colors.ink);
       doc.text('Work items', 20, 95);
 
+      const contentBottomY = 276;
       let y = 100;
       function drawTableHead() {
         doc.setFillColor(colors.pale[0], colors.pale[1], colors.pale[2]);
         doc.setDrawColor(colors.line[0], colors.line[1], colors.line[2]);
-        doc.rect(20, y, 170, 8, 'FD');
+        doc.rect(20, y, 170, 7, 'FD');
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(7);
         setText(colors.ink);
-        doc.text('ITEM', 22, y + 5);
-        doc.text('QTY', 128, y + 5, { align: 'right' });
-        doc.text('UNIT', 143, y + 5, { align: 'right' });
-        doc.text('UNIT PRICE', 166, y + 5, { align: 'right' });
-        doc.text('TOTAL', 188, y + 5, { align: 'right' });
-        y += 8;
+        doc.text('ITEM', 22, y + 4.7);
+        doc.text('QTY', 128, y + 4.7, { align: 'right' });
+        doc.text('UNIT', 143, y + 4.7, { align: 'right' });
+        doc.text('UNIT PRICE', 166, y + 4.7, { align: 'right' });
+        doc.text('TOTAL', 188, y + 4.7, { align: 'right' });
+        y += 7;
       }
 
       function newPage() {
@@ -1677,7 +1678,7 @@
 
       drawTableHead();
       doc.setFont('helvetica', 'normal');
-      doc.setFontSize(8.1);
+      doc.setFontSize(7.9);
       if (!rows.length) {
         doc.rect(20, y, 170, 9);
         setText(colors.muted);
@@ -1686,8 +1687,8 @@
       } else {
         rows.forEach(function(row, index) {
           const nameLines = doc.splitTextToSize(String(row.name || '-'), 82);
-          const rowHeight = Math.max(8, 4 + nameLines.length * 4);
-          if (y + rowHeight > 247) newPage();
+          const rowHeight = Math.max(7, 3.4 + nameLines.length * 3.6);
+          if (y + rowHeight > contentBottomY) newPage();
           if (index % 2 === 1) {
             doc.setFillColor(colors.pale[0], colors.pale[1], colors.pale[2]);
             doc.rect(20, y, 170, rowHeight, 'F');
@@ -1696,17 +1697,16 @@
           doc.rect(20, y, 170, rowHeight);
           doc.setFont('helvetica', 'bold');
           setText(colors.ink);
-          doc.text(nameLines, 22, y + 5);
+          doc.text(nameLines, 22, y + 4.8);
           doc.setFont('helvetica', 'normal');
-          doc.text(String(row.qty), 128, y + 5, { align: 'right' });
-          doc.text(String(row.unit || ''), 143, y + 5, { align: 'right' });
-          doc.text(money(row.unitPrice), 166, y + 5, { align: 'right' });
-          doc.text(money(row.total), 188, y + 5, { align: 'right' });
+          doc.text(String(row.qty), 128, y + 4.8, { align: 'right' });
+          doc.text(String(row.unit || ''), 143, y + 4.8, { align: 'right' });
+          doc.text(money(row.unitPrice), 166, y + 4.8, { align: 'right' });
+          doc.text(money(row.total), 188, y + 4.8, { align: 'right' });
           y += rowHeight;
         });
       }
 
-      if (y > 240) newPage();
       const summaryX = 112;
       const summaryW = 78;
       const lines = [
@@ -1716,24 +1716,26 @@
       if (totals.customerDiscount > 0) {
         lines.splice(1, 0, ['Discount (' + totals.discountRate + '%)', '-' + money(totals.customerDiscount)]);
       }
+      const summaryHeight = (lines.length * 7) + 9;
+      if (y + summaryHeight > contentBottomY) newPage();
       lines.forEach(function(line) {
         doc.setFillColor(colors.white[0], colors.white[1], colors.white[2]);
-        doc.rect(summaryX, y, summaryW, 8, 'FD');
+        doc.rect(summaryX, y, summaryW, 7, 'FD');
         doc.setFont('helvetica', 'normal');
-        doc.setFontSize(8.8);
+        doc.setFontSize(8.4);
         setText(colors.muted);
-        doc.text(line[0], summaryX + 3, y + 5.2);
+        doc.text(line[0], summaryX + 3, y + 4.7);
         setText(colors.ink);
-        doc.text(line[1], summaryX + summaryW - 3, y + 5.2, { align: 'right' });
-        y += 8;
+        doc.text(line[1], summaryX + summaryW - 3, y + 4.7, { align: 'right' });
+        y += 7;
       });
       doc.setFillColor(colors.moss[0], colors.moss[1], colors.moss[2]);
-      doc.rect(summaryX, y, summaryW, 10, 'F');
+      doc.rect(summaryX, y, summaryW, 9, 'F');
       doc.setFont('times', 'bold');
-      doc.setFontSize(13);
+      doc.setFontSize(12.5);
       doc.setTextColor(255, 255, 255);
-      doc.text('Total', summaryX + 3, y + 6.6);
-      doc.text(money(totals.customerTotal), summaryX + summaryW - 3, y + 6.6, { align: 'right' });
+      doc.text('Total', summaryX + 3, y + 6);
+      doc.text(money(totals.customerTotal), summaryX + summaryW - 3, y + 6, { align: 'right' });
 
       const pageCount = doc.internal.getNumberOfPages();
       for (let pageNumber = 1; pageNumber <= pageCount; pageNumber += 1) {
