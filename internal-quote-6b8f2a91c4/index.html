@@ -561,6 +561,7 @@
       siteAddress: document.getElementById('siteAddress'),
       quoteDate: document.getElementById('quoteDate'),
       validUntil: document.getElementById('validUntil'),
+      brandLogoImage: document.getElementById('brandLogoImage'),
       toast: document.getElementById('toast')
     };
 
@@ -1453,17 +1454,23 @@
       saveDraft();
     }
 
-    function exportPDF() {
+    async function exportPDF() {
       const data = getQuoteData();
       const totals = getTotals();
-      const html = buildHoldwaysQuoteHTML(data, totals);
-      if (activePdfUrl) {
-        URL.revokeObjectURL(activePdfUrl);
+      try {
+        await generateHoldwaysPDF(data, totals);
+        showToast('Holdways estimate PDF downloaded.');
+      } catch (error) {
+        console.error(error);
+        const html = buildHoldwaysQuoteHTML(data, totals);
+        if (activePdfUrl) {
+          URL.revokeObjectURL(activePdfUrl);
+        }
+        const blob = new Blob([html], { type: 'text/html' });
+        activePdfUrl = URL.createObjectURL(blob);
+        openHTMLPDFModal(activePdfUrl);
+        showToast('PDF download unavailable. Printable estimate is ready.');
       }
-      const blob = new Blob([html], { type: 'text/html' });
-      activePdfUrl = URL.createObjectURL(blob);
-      openHTMLPDFModal(activePdfUrl);
-      showToast('Holdways quote is ready.');
     }
 
     function escapeHTML(value) {
@@ -1504,6 +1511,245 @@
         ':root{--paper:#eef1ec;--cream:#fcfaf4;--ink:#20271f;--muted:#637063;--line:rgba(32,39,31,.16);--moss:#466b52;--serif:Constantia,"Sitka Text","Palatino Linotype",Georgia,serif;--sans:"Segoe UI Variable","Segoe UI",system-ui,-apple-system,BlinkMacSystemFont,sans-serif}' +
         '*{box-sizing:border-box}html,body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans)}.page{width:210mm;min-height:297mm;margin:0 auto;padding:10mm}.document{width:100%;min-height:277mm;display:grid;grid-template-rows:auto auto 1fr auto;gap:5mm;border:1px solid var(--line);border-radius:10px;background:var(--cream);padding:8mm}.top{display:grid;grid-template-columns:1fr auto;gap:8mm;align-items:start;border-bottom:1px solid var(--line);padding-bottom:5mm}.logo{width:70mm;height:auto}.doc-head{text-align:right}.doc-head h1{margin:0;color:var(--ink);font-family:var(--serif);font-size:25pt;line-height:1}.doc-head p{margin:2mm 0 0;color:var(--muted);font-size:8.4pt;line-height:1.35}.meta{display:grid;grid-template-columns:1.45fr .85fr;gap:4mm}.panel{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff}.panel-title{background:rgba(238,243,232,.9);border-bottom:1px solid var(--line);font-family:var(--serif);font-size:11pt;font-weight:700;padding:2mm 3mm}.fields{display:grid;grid-template-columns:1fr 1fr;gap:2.2mm 4mm;padding:3mm}.field.address{grid-column:1/-1}.detail-fields{grid-template-columns:1fr}.label{display:block;color:var(--muted);font-size:6.7pt;font-weight:900;letter-spacing:.09em;text-transform:uppercase}.value{display:block;margin-top:.6mm;color:var(--ink);font-size:8.8pt;line-height:1.22;overflow-wrap:anywhere}.items-wrap{align-self:start}.section-title{display:flex;justify-content:space-between;align-items:flex-end;margin:0 0 2mm}.section-title h2{margin:0;font-family:var(--serif);font-size:14.5pt}.section-title span{color:var(--muted);font-size:7.5pt;font-weight:800}.items{width:100%;border-collapse:collapse;border:1px solid var(--line);background:#fff}.items th{background:rgba(238,243,232,.95);color:var(--ink);font-size:7pt;letter-spacing:.08em;text-align:left;text-transform:uppercase;padding:1.7mm 2mm}.items td{border-top:1px solid var(--line);padding:1.55mm 2mm;font-size:8.1pt;line-height:1.22;vertical-align:top}.items tr{break-inside:avoid;page-break-inside:avoid}.items tbody tr:nth-child(even) td{background:rgba(238,243,232,.35)}.item-name{width:50%;font-weight:650;overflow-wrap:anywhere}.num{text-align:right}.money{text-align:right;white-space:nowrap}.empty-row{text-align:center;color:var(--muted);padding:6mm!important}.bottom{display:flex;justify-content:flex-end}.summary{width:78mm;border:1px solid var(--line);border-radius:8px;background:#fff;overflow:hidden}.total-row{display:flex;justify-content:space-between;gap:6mm;padding:2mm 3mm;border-bottom:1px solid var(--line);font-size:8.8pt}.total-row span{color:var(--muted)}.total-row strong{color:var(--ink);white-space:nowrap}.customer-total{background:var(--moss);color:#fff;border-bottom:0;font-family:var(--serif);font-size:13pt;font-weight:700}.customer-total span,.customer-total strong{color:#fff}.footer{display:flex;justify-content:space-between;gap:8mm;align-items:center;border-top:1px solid var(--line);padding-top:3mm;color:var(--muted);font-size:7.8pt}.footer strong{color:var(--ink)}@page{size:A4;margin:0}@media print{body{background:var(--paper);-webkit-print-color-adjust:exact;print-color-adjust:exact}.page{margin:0}.document{border-radius:0}}' +
         '</style></head><body><main class="page"><section class="document"><header class="top"><img class="logo" src="' + escapeHTML(logoUrl) + '" alt="Holdways Fencing & Landscaping"><div class="doc-head"><h1>Estimate</h1><p>07754 274196<br>holdways.co.uk</p></div></header><section class="meta"><div class="panel"><div class="panel-title">Prepared for</div><div class="fields"><div class="field"><span class="label">Customer</span><span class="value">' + escapeHTML(data.customer.name || '-') + '</span></div><div class="field"><span class="label">Phone</span><span class="value">' + escapeHTML(data.customer.phone || '-') + '</span></div><div class="field"><span class="label">Email</span><span class="value">' + escapeHTML(data.customer.email || '-') + '</span></div><div class="field address"><span class="label">Site address</span><span class="value">' + escapeHTML(data.customer.siteAddress || '-') + '</span></div></div></div><div class="panel"><div class="panel-title">Project details</div><div class="fields detail-fields"><div class="field"><span class="label">Date</span><span class="value">' + escapeHTML(quoteDate) + '</span></div><div class="field"><span class="label">Valid until</span><span class="value">' + escapeHTML(validUntil) + '</span></div></div></div></section><section class="items-wrap"><div class="section-title"><h2>Work items</h2><span>Customer copy</span></div><table class="items"><thead><tr><th>Item</th><th class="num">Qty</th><th>Unit</th><th class="money">Unit price</th><th class="money">Total</th></tr></thead><tbody>' + itemRows + '</tbody></table></section><section class="bottom"><div class="summary"><div class="total-row"><span>Subtotal</span><strong>' + escapeHTML(money(totals.customerSubtotal)) + '</strong></div>' + discountRow + '<div class="total-row"><span>VAT (' + escapeHTML(totals.taxRate) + '%)</span><strong>' + escapeHTML(money(totals.customerTax)) + '</strong></div><div class="total-row customer-total"><span>Total</span><strong>' + escapeHTML(money(totals.customerTotal)) + '</strong></div></div></section><footer class="footer"><span><strong>Holdways Fencing & Landscaping</strong></span><span>07754 274196 | holdways.co.uk</span></footer></section></main><script>window.addEventListener("load",function(){setTimeout(function(){window.print();},350);});<\/script></body></html>';
+    }
+
+    function getCustomerRows(data, totals) {
+      const rows = data.items.map(function(item) {
+        const quantity = Number(item.qty) || 0;
+        const unitPrice = (Number(item.unitPrice) || 0) * (item.skipMarkup ? 1 : 1.36);
+        return {
+          name: item.name,
+          qty: quantity,
+          unit: item.unit || '',
+          unitPrice: unitPrice,
+          total: quantity * unitPrice
+        };
+      });
+      if (totals.labourCharge > 0) {
+        rows.push({ name: 'Labour', qty: 1, unit: 'Job', unitPrice: totals.labourCharge, total: totals.labourCharge });
+      }
+      return rows;
+    }
+
+    function pdfFileName(data) {
+      const name = (data.customer.name || 'customer')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .slice(0, 40) || 'customer';
+      return 'holdways-estimate-' + name + '-' + (data.customer.quoteDate || todayISO()) + '.pdf';
+    }
+
+    function waitForImage(image) {
+      if (!image || image.complete) return Promise.resolve();
+      return new Promise(function(resolve) {
+        image.addEventListener('load', resolve, { once: true });
+        image.addEventListener('error', resolve, { once: true });
+      });
+    }
+
+    async function generateHoldwaysPDF(data, totals) {
+      if (!window.jspdf || !window.jspdf.jsPDF) {
+        loadJsPDFScript();
+        throw new Error('PDF tools are still loading.');
+      }
+
+      const doc = new window.jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const rows = getCustomerRows(data, totals);
+      const page = { width: 210, height: 297, margin: 12 };
+      const colors = {
+        paper: [238, 241, 236],
+        cream: [252, 250, 244],
+        ink: [32, 39, 31],
+        muted: [99, 112, 99],
+        line: [205, 211, 201],
+        moss: [70, 107, 82],
+        pale: [238, 243, 232],
+        white: [255, 255, 255]
+      };
+
+      function setText(color) {
+        doc.setTextColor(color[0], color[1], color[2]);
+      }
+
+      function panel(x, y, w, h, fill) {
+        doc.setDrawColor(colors.line[0], colors.line[1], colors.line[2]);
+        doc.setFillColor(fill[0], fill[1], fill[2]);
+        doc.roundedRect(x, y, w, h, 2, 2, 'FD');
+      }
+
+      function label(text, x, y) {
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(6.7);
+        setText(colors.muted);
+        doc.text(String(text).toUpperCase(), x, y);
+      }
+
+      function value(text, x, y, maxWidth) {
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8.6);
+        setText(colors.ink);
+        doc.text(doc.splitTextToSize(String(text || '-'), maxWidth), x, y);
+      }
+
+      async function drawHeader() {
+        doc.setFillColor(colors.paper[0], colors.paper[1], colors.paper[2]);
+        doc.rect(0, 0, page.width, page.height, 'F');
+        panel(page.margin, page.margin, page.width - page.margin * 2, page.height - page.margin * 2, colors.cream);
+
+        const logo = elements.brandLogoImage;
+        await waitForImage(logo);
+        if (logo && logo.naturalWidth) {
+          doc.addImage(logo, 'PNG', 20, 19, 62, 0);
+        }
+
+        doc.setFont('times', 'normal');
+        doc.setFontSize(26);
+        setText(colors.ink);
+        doc.text('Estimate', 190, 25, { align: 'right' });
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8.4);
+        setText(colors.muted);
+        doc.text(['07754 274196', 'holdways.co.uk'], 190, 32, { align: 'right' });
+        doc.setDrawColor(colors.line[0], colors.line[1], colors.line[2]);
+        doc.line(20, 44, 190, 44);
+      }
+
+      await drawHeader();
+
+      panel(20, 51, 112, 31, colors.white);
+      doc.setFillColor(colors.pale[0], colors.pale[1], colors.pale[2]);
+      doc.rect(20, 51, 112, 8, 'F');
+      doc.setFont('times', 'bold');
+      doc.setFontSize(11);
+      setText(colors.ink);
+      doc.text('Prepared for', 23, 56.5);
+      label('Customer', 23, 65);
+      value(data.customer.name, 23, 70, 48);
+      label('Phone', 77, 65);
+      value(data.customer.phone, 77, 70, 48);
+      label('Email', 23, 76);
+      value(data.customer.email, 23, 81, 48);
+      label('Site address', 77, 76);
+      value(data.customer.siteAddress, 77, 81, 50);
+
+      panel(137, 51, 53, 31, colors.white);
+      doc.setFillColor(colors.pale[0], colors.pale[1], colors.pale[2]);
+      doc.rect(137, 51, 53, 8, 'F');
+      doc.setFont('times', 'bold');
+      doc.setFontSize(11);
+      setText(colors.ink);
+      doc.text('Project details', 140, 56.5);
+      label('Date', 140, 65);
+      value(data.customer.quoteDate || todayISO(), 140, 70, 44);
+      label('Valid until', 140, 76);
+      value(data.customer.validUntil || '-', 140, 81, 44);
+
+      doc.setFont('times', 'bold');
+      doc.setFontSize(14.5);
+      setText(colors.ink);
+      doc.text('Work items', 20, 95);
+
+      let y = 100;
+      function drawTableHead() {
+        doc.setFillColor(colors.pale[0], colors.pale[1], colors.pale[2]);
+        doc.setDrawColor(colors.line[0], colors.line[1], colors.line[2]);
+        doc.rect(20, y, 170, 8, 'FD');
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(7);
+        setText(colors.ink);
+        doc.text('ITEM', 22, y + 5);
+        doc.text('QTY', 128, y + 5, { align: 'right' });
+        doc.text('UNIT', 143, y + 5, { align: 'right' });
+        doc.text('UNIT PRICE', 166, y + 5, { align: 'right' });
+        doc.text('TOTAL', 188, y + 5, { align: 'right' });
+        y += 8;
+      }
+
+      function newPage() {
+        doc.addPage();
+        doc.setFillColor(colors.paper[0], colors.paper[1], colors.paper[2]);
+        doc.rect(0, 0, page.width, page.height, 'F');
+        panel(page.margin, page.margin, page.width - page.margin * 2, page.height - page.margin * 2, colors.cream);
+        y = 24;
+        drawTableHead();
+      }
+
+      drawTableHead();
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.1);
+      if (!rows.length) {
+        doc.rect(20, y, 170, 9);
+        setText(colors.muted);
+        doc.text('No items added.', 105, y + 5.5, { align: 'center' });
+        y += 9;
+      } else {
+        rows.forEach(function(row, index) {
+          const nameLines = doc.splitTextToSize(String(row.name || '-'), 82);
+          const rowHeight = Math.max(8, 4 + nameLines.length * 4);
+          if (y + rowHeight > 247) newPage();
+          if (index % 2 === 1) {
+            doc.setFillColor(colors.pale[0], colors.pale[1], colors.pale[2]);
+            doc.rect(20, y, 170, rowHeight, 'F');
+          }
+          doc.setDrawColor(colors.line[0], colors.line[1], colors.line[2]);
+          doc.rect(20, y, 170, rowHeight);
+          doc.setFont('helvetica', 'bold');
+          setText(colors.ink);
+          doc.text(nameLines, 22, y + 5);
+          doc.setFont('helvetica', 'normal');
+          doc.text(String(row.qty), 128, y + 5, { align: 'right' });
+          doc.text(String(row.unit || ''), 143, y + 5, { align: 'right' });
+          doc.text(money(row.unitPrice), 166, y + 5, { align: 'right' });
+          doc.text(money(row.total), 188, y + 5, { align: 'right' });
+          y += rowHeight;
+        });
+      }
+
+      if (y > 240) newPage();
+      const summaryX = 112;
+      const summaryW = 78;
+      const lines = [
+        ['Subtotal', money(totals.customerSubtotal)],
+        ['VAT (' + totals.taxRate + '%)', money(totals.customerTax)]
+      ];
+      if (totals.customerDiscount > 0) {
+        lines.splice(1, 0, ['Discount (' + totals.discountRate + '%)', '-' + money(totals.customerDiscount)]);
+      }
+      lines.forEach(function(line) {
+        doc.setFillColor(colors.white[0], colors.white[1], colors.white[2]);
+        doc.rect(summaryX, y, summaryW, 8, 'FD');
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8.8);
+        setText(colors.muted);
+        doc.text(line[0], summaryX + 3, y + 5.2);
+        setText(colors.ink);
+        doc.text(line[1], summaryX + summaryW - 3, y + 5.2, { align: 'right' });
+        y += 8;
+      });
+      doc.setFillColor(colors.moss[0], colors.moss[1], colors.moss[2]);
+      doc.rect(summaryX, y, summaryW, 10, 'F');
+      doc.setFont('times', 'bold');
+      doc.setFontSize(13);
+      doc.setTextColor(255, 255, 255);
+      doc.text('Total', summaryX + 3, y + 6.6);
+      doc.text(money(totals.customerTotal), summaryX + summaryW - 3, y + 6.6, { align: 'right' });
+
+      const pageCount = doc.internal.getNumberOfPages();
+      for (let pageNumber = 1; pageNumber <= pageCount; pageNumber += 1) {
+        doc.setPage(pageNumber);
+        doc.setDrawColor(colors.line[0], colors.line[1], colors.line[2]);
+        doc.line(20, 276, 190, 276);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(7.8);
+        setText(colors.ink);
+        doc.text('Holdways Fencing & Landscaping', 20, 282);
+        doc.setFont('helvetica', 'normal');
+        setText(colors.muted);
+        doc.text('07754 274196 | holdways.co.uk', 190, 282, { align: 'right' });
+      }
+
+      downloadPDF(doc, pdfFileName(data));
     }
 
     function openPrintPDFWindow(html) {
