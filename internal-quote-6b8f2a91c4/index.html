@@ -1,0 +1,1735 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#eef1ec">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Holdways Quote Builder</title>
+  <link rel="icon" href="../logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../logo.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            forest: {
+              50: '#eef3e8',
+              100: '#dfe8d8',
+              600: '#637063',
+              700: '#556f7a',
+              800: '#466b52',
+              900: '#20271f'
+            }
+          },
+          boxShadow: {
+            soft: '0 14px 35px rgba(35, 39, 31, 0.13)'
+          }
+        }
+      }
+    };
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root {
+      --paper: #eef1ec;
+      --card: rgba(252, 250, 244, 0.93);
+      --card-solid: #fcfaf4;
+      --ink: #20271f;
+      --muted: #637063;
+      --line: rgba(32, 39, 31, 0.16);
+      --moss: #466b52;
+      --blue: #556f7a;
+      --clay: #9b684f;
+      --sun: #d6b56d;
+      --shadow: 0 26px 80px rgba(35, 39, 31, 0.22);
+      --soft-shadow: 0 14px 35px rgba(35, 39, 31, 0.13);
+      --serif: Constantia, "Sitka Text", "Palatino Linotype", Georgia, serif;
+      --sans: "Segoe UI Variable", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      color-scheme: light;
+    }
+    body {
+      background:
+        linear-gradient(115deg, rgba(238, 241, 236, 0.93), rgba(232, 228, 218, 0.86) 42%, rgba(215, 224, 221, 0.9)),
+        url("../HERO.JPG") center / cover fixed;
+      color: var(--ink);
+      font-family: var(--sans);
+      letter-spacing: 0;
+    }
+    body::before {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-image:
+        linear-gradient(rgba(32, 39, 31, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(32, 39, 31, 0.04) 1px, transparent 1px);
+      background-size: 34px 34px;
+      content: "";
+      pointer-events: none;
+    }
+    h1, h2, h3, #modalTitle {
+      font-family: var(--serif);
+      letter-spacing: 0;
+    }
+    input, select, textarea { outline: none; }
+    .focus-ring:focus {
+      box-shadow: 0 0 0 3px rgba(70, 107, 82, 0.22);
+      border-color: var(--moss);
+    }
+    .icon-btn svg { width: 1rem; height: 1rem; }
+    .brand-logo {
+      width: clamp(150px, 18vw, 230px);
+      height: auto;
+      flex: 0 0 auto;
+    }
+    nav {
+      background: color-mix(in srgb, var(--card-solid) 92%, transparent) !important;
+      border-color: var(--line) !important;
+      box-shadow: 0 8px 28px rgba(35, 39, 31, 0.08);
+    }
+    #catalogPanel,
+    #builderPanel,
+    #modalBackdrop > div {
+      border-color: var(--line) !important;
+      background: var(--card) !important;
+      box-shadow: var(--shadow) !important;
+      backdrop-filter: blur(18px) saturate(1.08);
+    }
+    thead {
+      background: #eef3e8 !important;
+      color: var(--ink) !important;
+    }
+    tbody,
+    input,
+    select,
+    textarea,
+    #emptyQuote {
+      background-color: var(--card-solid) !important;
+    }
+    input,
+    select,
+    textarea {
+      border-color: var(--line) !important;
+      color: var(--ink) !important;
+    }
+    .holdways-card {
+      border-color: var(--line) !important;
+      background: color-mix(in srgb, var(--card-solid) 76%, transparent) !important;
+    }
+    .holdways-muted {
+      color: var(--muted) !important;
+    }
+    .holdways-clay {
+      color: var(--clay) !important;
+    }
+    @media print {
+      body { background: white !important; }
+      nav, #catalogPanel, #actionBar, #mobileActionBar, .no-print { display: none !important; }
+      main { display: block !important; padding: 0 !important; max-width: none !important; }
+      #builderPanel {
+        box-shadow: none !important;
+        border: 0 !important;
+        padding: 0 !important;
+      }
+      .print-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+      input, textarea, select {
+        border: 0 !important;
+        padding-left: 0 !important;
+        background: transparent !important;
+      }
+    }
+    @media (max-width: 720px) {
+      .responsive-table table,
+      .responsive-table thead,
+      .responsive-table tbody,
+      .responsive-table tr,
+      .responsive-table th,
+      .responsive-table td {
+        display: block;
+        width: 100%;
+      }
+      .responsive-table thead {
+        display: none;
+      }
+      .responsive-table tr {
+        border-bottom: 1px solid #e2e8f0;
+        padding: 0.75rem;
+      }
+      .responsive-table tr:last-child {
+        border-bottom: 0;
+      }
+      .responsive-table td {
+        border: 0;
+        padding: 0.35rem 0;
+      }
+      .responsive-table td[data-label] {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+      }
+      .responsive-table td[data-label]::before {
+        color: #64748b;
+        content: attr(data-label);
+        flex: 0 0 auto;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .responsive-table td[data-label] > input {
+        max-width: 12rem;
+      }
+      .catalog-name-cell,
+      .quote-name-cell {
+        display: block !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-800">
+  <img id="brandLogoImage" class="hidden" src="../logo.png" alt="Holdways">
+  <img id="pdfLogoImage" class="hidden" src="../logowhite.png" alt="Holdways Fencing & Landscaping">
+  <nav class="sticky top-0 z-30 border-b border-emerald-900/10 bg-white/90 backdrop-blur">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+      <div class="flex min-w-0 items-center gap-4">
+        <img class="brand-logo" src="../logo.png" alt="Holdways Fencing & Landscaping">
+        <div class="hidden min-w-0 sm:block">
+          <h1 class="text-xl font-bold tracking-tight text-forest-900">Quote Builder</h1>
+          <p class="hidden text-xs holdways-muted sm:block">Holdways Fencing & Landscaping</p>
+        </div>
+      </div>
+      <div id="actionBar" class="hidden items-center gap-2 lg:flex">
+        <button id="saveQuoteTop" class="rounded-lg bg-forest-800 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-forest-900">Save Quote</button>
+        <button id="loadQuoteTop" class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-forest-600 hover:text-forest-800">Load Quote</button>
+        <button id="newQuoteTop" class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-forest-600 hover:text-forest-800">New Quote</button>
+        <button id="exportPdfTop" class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-forest-600 hover:text-forest-800">Export PDF</button>
+        <button id="printTop" class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-forest-600 hover:text-forest-800">Print</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="mx-auto grid max-w-7xl gap-5 px-4 pb-28 pt-5 sm:px-6 lg:grid-cols-[minmax(340px,0.86fr)_minmax(560px,1.42fr)] lg:px-8">
+    <section id="catalogPanel" class="rounded-xl border border-emerald-900/10 bg-white/95 p-4 shadow-soft sm:p-5">
+      <div class="holdways-card mb-5 rounded-lg border border-forest-800/10 bg-forest-50 p-4">
+        <div class="mb-3">
+          <h2 class="text-lg font-bold text-forest-900">Quick Quote</h2>
+          <p class="text-sm holdways-muted">Enter the run length and get an internal guide price.</p>
+        </div>
+        <div class="grid gap-3">
+          <label class="text-sm font-medium text-slate-600">Fencing Type
+            <select id="quickFenceType" class="focus-ring mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 font-normal text-slate-800">
+              <option value="concrete-150">Concrete closeboard - 150mm gravel board</option>
+              <option value="concrete-300">Concrete closeboard - 300mm gravel board</option>
+              <option value="concrete-450">Concrete closeboard - 450mm gravel board</option>
+              <option value="timber">Timber feather edge</option>
+            </select>
+          </label>
+          <div class="grid gap-3 sm:grid-cols-2">
+            <label class="text-sm font-medium text-slate-600">Metres
+              <input id="quickMetres" class="focus-ring mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 font-normal text-slate-800" type="number" min="0" step="0.1" placeholder="e.g. 12">
+            </label>
+            <label class="text-sm font-medium text-slate-600">Labour Days
+              <input id="quickLabourDays" class="focus-ring mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 font-normal text-slate-800" type="number" min="0" step="0.5" value="1">
+            </label>
+          </div>
+          <div class="grid gap-2 text-sm font-semibold text-slate-600 sm:grid-cols-2">
+            <label class="flex items-center gap-2 rounded-lg bg-white px-3 py-2">
+              <input id="quickIncludeMaterials" type="checkbox" checked>
+              Include materials
+            </label>
+            <label class="flex items-center justify-between gap-3 rounded-lg bg-white px-3 py-2">
+              <span>Markup %</span>
+              <input id="quickMarkupRate" class="focus-ring w-20 rounded-lg border border-slate-200 bg-white px-2 py-1 text-right font-normal text-slate-800" type="number" min="0" step="0.01" value="36">
+            </label>
+            <label class="flex items-center gap-2 rounded-lg bg-white px-3 py-2">
+              <input id="quickIncludeLabour" type="checkbox" checked>
+              Include labour
+            </label>
+            <label class="flex items-center gap-2 rounded-lg bg-white px-3 py-2">
+              <input id="quickExtraPerson" type="checkbox">
+              Extra person
+            </label>
+            <label class="flex items-center gap-2 rounded-lg bg-white px-3 py-2 sm:col-span-2">
+              <input id="quickIncludeVat" type="checkbox" checked>
+              Include VAT
+            </label>
+          </div>
+          <div id="quickQuoteSummary" class="rounded-lg bg-white p-3 text-sm text-slate-700">
+            Enter metres to calculate a quick quote.
+          </div>
+          <button id="addQuickQuoteBtn" class="rounded-lg bg-forest-800 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-forest-900" type="button">Add Quick Quote Line</button>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <div>
+          <h2 class="text-lg font-bold text-forest-900">Materials Catalog</h2>
+          <p class="text-sm holdways-muted">Search, set quantity, add. This is your working list.</p>
+        </div>
+      </div>
+      <div class="mb-4 grid gap-3 sm:grid-cols-[1fr_180px]">
+        <input id="searchInput" class="focus-ring rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm" type="search" placeholder="Search materials">
+        <select id="categoryFilter" class="focus-ring rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm">
+          <option>All</option>
+          <option>Posts</option>
+          <option>Panels</option>
+          <option>Gates</option>
+          <option>Accessories</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="responsive-table overflow-hidden rounded-lg border border-slate-200">
+        <div class="max-h-[62vh] overflow-auto">
+          <table class="min-w-full divide-y divide-slate-200 text-sm">
+            <thead class="sticky top-0 bg-forest-50 text-left text-xs uppercase tracking-wide text-forest-900">
+              <tr>
+                <th class="px-3 py-3 font-bold">Name</th>
+                <th class="px-3 py-3 text-right font-bold">Price</th>
+                <th class="px-3 py-3 text-center font-bold">Qty</th>
+                <th class="px-3 py-3 text-center font-bold">Add</th>
+              </tr>
+            </thead>
+            <tbody id="materialsBody" class="divide-y divide-slate-100 bg-white"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="mt-4 flex flex-col gap-2 sm:flex-row sm:justify-between">
+        <button id="toggleCatalogEditBtn" class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-forest-600 hover:text-forest-800">Enable Catalog Editing</button>
+        <button id="addMaterialBtn" class="hidden rounded-lg bg-forest-800 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-forest-900">Add New Material</button>
+      </div>
+    </section>
+
+    <section id="builderPanel" class="rounded-xl border border-emerald-900/10 bg-white/95 p-4 shadow-soft sm:p-5">
+      <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-forest-900">Working Quote</h2>
+          <p class="text-sm holdways-muted">Build the job here. The customer only sees the exported PDF.</p>
+        </div>
+        <button id="addCustomItemBtn" class="rounded-lg bg-forest-800 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-forest-900">Add Custom Item</button>
+      </div>
+
+      <div class="holdways-card mb-4 rounded-lg border border-slate-200 bg-slate-50/70 p-3">
+        <div class="mb-2 flex items-center justify-between gap-3">
+          <h3 class="text-xs font-bold uppercase tracking-wide text-forest-900">PDF Details</h3>
+          <span class="text-xs font-semibold holdways-muted">Used on export only</span>
+        </div>
+        <div class="print-grid grid gap-2 sm:grid-cols-3">
+          <label class="text-sm font-medium text-slate-600">Name
+            <input id="customerName" class="focus-ring mt-1 w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 font-normal text-slate-800" type="text">
+          </label>
+          <label class="text-sm font-medium text-slate-600">Phone
+            <input id="customerPhone" class="focus-ring mt-1 w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 font-normal text-slate-800" type="tel">
+          </label>
+          <label class="text-sm font-medium text-slate-600">Email
+            <input id="customerEmail" class="focus-ring mt-1 w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 font-normal text-slate-800" type="email">
+          </label>
+          <label class="text-sm font-medium text-slate-600 sm:col-span-3">Site Address
+            <input id="siteAddress" class="focus-ring mt-1 w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 font-normal text-slate-800" type="text">
+          </label>
+          <label class="text-sm font-medium text-slate-600">Date
+            <input id="quoteDate" class="focus-ring mt-1 w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 font-normal text-slate-800" type="date">
+          </label>
+          <label class="text-sm font-medium text-slate-600">Valid Until
+            <input id="validUntil" class="focus-ring mt-1 w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 font-normal text-slate-800" type="date">
+          </label>
+        </div>
+      </div>
+
+      <div class="responsive-table overflow-hidden rounded-lg border border-slate-200">
+        <div>
+          <table class="min-w-full divide-y divide-slate-200 text-sm">
+            <thead class="bg-forest-50 text-left text-xs uppercase tracking-wide text-forest-900">
+              <tr>
+                <th class="px-3 py-3 font-bold">Item</th>
+                <th class="px-3 py-3 font-bold">Qty</th>
+                <th class="px-3 py-3 font-bold">Unit</th>
+                <th class="px-3 py-3 text-right font-bold">Unit Price</th>
+                <th class="px-3 py-3 text-right font-bold">Line Total</th>
+                <th class="px-3 py-3 text-center font-bold">Remove</th>
+              </tr>
+            </thead>
+            <tbody id="quoteItemsBody" class="divide-y divide-slate-100 bg-white"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="emptyQuote" class="rounded-b-lg border-x border-b border-slate-200 bg-white px-4 py-8 text-center text-sm text-slate-500">
+        Add catalog or custom items to begin.
+      </div>
+
+      <div class="holdways-card mt-4 rounded-lg border border-forest-800/10 bg-forest-50 p-3">
+        <div class="mb-3 flex flex-col gap-1 border-b border-forest-800/10 pb-2 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h3 class="text-xs font-bold uppercase tracking-wide text-forest-900">Working Totals</h3>
+            <p class="text-sm holdways-muted">Internal figures, shortcuts, and final customer total.</p>
+          </div>
+          <span id="quoteItemCount" class="rounded-full bg-white px-3 py-1 text-xs font-bold text-forest-900 shadow-sm">0 items</span>
+        </div>
+
+        <div class="grid gap-3 lg:grid-cols-[1fr_1fr]">
+          <div class="rounded-lg bg-white p-3 shadow-sm">
+            <div class="grid gap-2 sm:grid-cols-3">
+              <label class="text-xs font-bold uppercase tracking-wide text-slate-500">Labour
+                <div class="mt-1 flex items-center gap-1">
+                  <span class="text-slate-500">&pound;</span>
+                  <input id="labourCharge" class="focus-ring w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-right text-sm font-semibold text-slate-800" type="number" min="0" step="0.01" value="0">
+                </div>
+              </label>
+              <label class="text-xs font-bold uppercase tracking-wide text-slate-500">Discount
+                <div class="mt-1 flex items-center gap-1">
+                  <input id="discountRate" class="focus-ring w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-right text-sm font-semibold text-slate-800" type="number" min="0" step="0.01" value="0">
+                  <span class="text-slate-500">%</span>
+                </div>
+              </label>
+              <label class="text-xs font-bold uppercase tracking-wide text-slate-500">VAT
+                <div class="mt-1 flex items-center gap-1">
+                  <input id="taxRate" class="focus-ring w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-right text-sm font-semibold text-slate-800" type="number" min="0" step="0.01" value="20">
+                  <span class="text-slate-500">%</span>
+                </div>
+              </label>
+            </div>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <button type="button" data-labour-preset="0" class="labour-preset rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-bold text-slate-700 transition hover:border-forest-600 hover:text-forest-800">No labour</button>
+              <button type="button" data-labour-preset="250" class="labour-preset rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-bold text-slate-700 transition hover:border-forest-600 hover:text-forest-800">1 day</button>
+              <button type="button" data-labour-preset="500" class="labour-preset rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-bold text-slate-700 transition hover:border-forest-600 hover:text-forest-800">2 days</button>
+              <button type="button" data-labour-add="250" class="labour-preset rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-bold text-slate-700 transition hover:border-forest-600 hover:text-forest-800">+ day</button>
+            </div>
+            <p id="labourDoubleCountWarning" class="mt-2 hidden rounded-md bg-amber-50 px-2 py-1.5 text-xs font-semibold text-amber-800">Labour is set here and a quick quote line may already include labour.</p>
+            <div class="mt-3 grid gap-2 text-xs text-slate-600 sm:grid-cols-3">
+              <div class="rounded-md bg-forest-50 px-2 py-1.5"><span class="block font-bold text-slate-500">Raw materials</span><strong id="rawMaterialsTotal" class="text-slate-900">&pound;0.00</strong></div>
+              <div class="rounded-md bg-forest-50 px-2 py-1.5"><span class="block font-bold text-slate-500">Fixed lines</span><strong id="fixedLinesTotal" class="text-slate-900">&pound;0.00</strong></div>
+              <div class="rounded-md bg-forest-50 px-2 py-1.5"><span class="block font-bold text-slate-500">36% uplift</span><strong id="customerMarkupTotal" class="text-slate-900">&pound;0.00</strong></div>
+            </div>
+          </div>
+
+          <div class="rounded-lg bg-white p-3 shadow-sm">
+            <div class="space-y-2 text-sm">
+              <div class="flex items-center justify-between gap-4">
+                <span class="font-semibold text-slate-600">Subtotal</span>
+                <span id="subtotal" class="font-bold text-slate-900">&pound;0.00</span>
+              </div>
+              <div class="flex items-center justify-between gap-4">
+                <span class="font-semibold text-slate-600">Discount</span>
+                <span id="discountAmount" class="font-bold text-slate-900">-&pound;0.00</span>
+              </div>
+              <div class="flex items-center justify-between gap-4">
+                <span class="font-semibold text-slate-600">VAT</span>
+                <span id="taxAmount" class="font-bold text-slate-900">&pound;0.00</span>
+              </div>
+              <div class="flex items-center justify-between gap-4 border-t border-slate-200 pt-3">
+                <span class="font-bold text-forest-900">Internal Total</span>
+                <span id="grandTotal" class="text-xl font-black text-forest-900">&pound;0.00</span>
+              </div>
+              <div class="mt-2 flex items-center justify-between gap-4 rounded-lg bg-forest-800 px-3 py-2.5 text-white">
+                <span class="text-sm font-bold">Customer Total</span>
+                <span id="customerTotal" class="text-xl font-black">&pound;0.00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="mobileActionBar" class="fixed inset-x-0 bottom-0 z-40 border-t border-emerald-900/10 bg-white/95 p-3 shadow-[0_-10px_30px_rgba(15,23,42,0.10)] backdrop-blur lg:hidden">
+    <div class="mx-auto grid max-w-7xl grid-cols-5 gap-2">
+      <button id="saveQuoteMobile" class="rounded-lg bg-forest-800 px-2 py-2 text-xs font-semibold text-white">Save</button>
+      <button id="loadQuoteMobile" class="rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs font-semibold text-slate-700">Load</button>
+      <button id="newQuoteMobile" class="rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs font-semibold text-slate-700">New</button>
+      <button id="exportPdfMobile" class="rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs font-semibold text-slate-700">PDF</button>
+      <button id="printMobile" class="rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs font-semibold text-slate-700">Print</button>
+    </div>
+  </div>
+
+  <div id="toast" class="fixed right-4 top-20 z-50 hidden rounded-lg bg-forest-900 px-4 py-3 text-sm font-semibold text-white shadow-lg"></div>
+
+  <div id="modalBackdrop" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/50 p-4">
+    <div class="w-full max-w-lg rounded-xl bg-white p-5 shadow-2xl">
+      <div class="mb-4 flex items-center justify-between gap-4">
+        <h3 id="modalTitle" class="text-lg font-bold text-forest-900">Modal</h3>
+        <button id="closeModalBtn" class="icon-btn rounded-lg border border-slate-200 p-2 text-slate-600 transition hover:border-forest-600 hover:text-forest-800" aria-label="Close modal"></button>
+      </div>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <script>
+    // ---------- Constants and state ----------
+    const STORAGE_KEYS = {
+      materials: 'fenceQuote.materials',
+      quotes: 'fenceQuote.savedQuotes',
+      draft: 'fenceQuote.currentDraft',
+      catalogVersion: 'fenceQuote.catalogVersion'
+    };
+
+    const CATALOG_VERSION = 'quote-pdf-24Q07740-1-vat-inclusive';
+
+    const categories = ['Posts', 'Panels', 'Gates', 'Accessories', 'Other'];
+
+    const pdfMaterials = [
+      { id: 'pdf-001', name: '20KG HANSON FAST SET POST FIX (BS 5838 PART 1)', category: 'Accessories', unit: 'Each', price: 6.30 },
+      { id: 'pdf-002', name: 'SLOTTED CONCRETE POST INTERMEDIATE 1830mm 6ft', category: 'Posts', unit: 'Each', price: 17.72 },
+      { id: 'pdf-003', name: 'SLOTTED CONCRETE POST INTERMEDIATE 2440mm 8ft', category: 'Posts', unit: 'Each', price: 19.03 },
+      { id: 'pdf-004', name: 'SLOTTED CONCRETE POST INTERMEDIATE 2745mm 9ft', category: 'Posts', unit: 'Each', price: 22.52 },
+      { id: 'pdf-005', name: 'SLOTTED CONCRETE POST INTERMEDIATE 3050mm 10ft', category: 'Posts', unit: 'Each', price: 35.12 },
+      { id: 'pdf-006', name: 'SLOTTED CONCRETE POST END 2440mm 8ft', category: 'Posts', unit: 'Each', price: 31.46 },
+      { id: 'pdf-007', name: 'LIGHT WEIGHT SLOTTED POST CORNER 2440mm 8ft', category: 'Posts', unit: 'Each', price: 34.55 },
+      { id: 'pdf-008', name: 'CONCRETE RECESSED POST 8ft 3IN', category: 'Posts', unit: 'Each', price: 38.17 },
+      { id: 'pdf-009', name: 'CONCRETE RECESSED GRAVEL BOARD 1830 x 150 x 45mm', category: 'Accessories', unit: 'Each', price: 11.51 },
+      { id: 'pdf-010', name: 'CONCRETE RECESSED GRAVEL BOARD 1830 x 305 x 45mm', category: 'Accessories', unit: 'Each', price: 18.71 },
+      { id: 'pdf-011', name: 'CONCRETE GRAVEL BOARD 3000 x 150mm', category: 'Accessories', unit: 'Each', price: 30.92 },
+      { id: 'pdf-012', name: 'TM 22 x 125mm x 1.65m BROWN TREATED FEATHER EDGE', category: 'Panels', unit: 'Each', price: 1.37 },
+      { id: 'pdf-013', name: 'TM 22 x 125mm x 1.8m BROWN TREATED FEATHER EDGE', category: 'Panels', unit: 'Each', price: 1.50 },
+      { id: 'pdf-014', name: 'TM 22 x 125mm x 2.4m BROWN TREATED FEATHER EDGE', category: 'Panels', unit: 'Each', price: 1.99 },
+      { id: 'pdf-015', name: 'TM 47 x 125mm x 2.4m BROWN TREATED CANT RAIL', category: 'Accessories', unit: 'Each', price: 4.21 },
+      { id: 'pdf-016', name: 'TM 47 x 125mm x 3.0m BROWN TREATED CANT RAIL', category: 'Accessories', unit: 'Each', price: 5.26 },
+      { id: 'pdf-017', name: 'TM 22 x 150mm x 1.83m BROWN TREATED GRAVEL BOARD', category: 'Accessories', unit: 'Each', price: 3.58 },
+      { id: 'pdf-018', name: 'TM 22 x 150mm x 2.4m BROWN TREATED GRAVEL BOARD', category: 'Accessories', unit: 'Each', price: 4.69 },
+      { id: 'pdf-019', name: 'TM 22 x 150mm x 3.0m BROWN TREATED GRAVEL BOARD', category: 'Accessories', unit: 'Each', price: 5.87 },
+      { id: 'pdf-020', name: 'TM 22 x 150mm x 3.6m BROWN TREATED GRAVEL BOARD', category: 'Accessories', unit: 'Each', price: 6.65 },
+      { id: 'pdf-021', name: 'TM 100 x 100mm x 2.4m GREEN TREATED WOODEN POST', category: 'Posts', unit: 'Each', price: 13.86 },
+      { id: 'pdf-022', name: 'TM 100 x 100mm x 3.0m GREEN TREATED WOODEN POST', category: 'Posts', unit: 'Each', price: 17.34 },
+      { id: 'pdf-023', name: 'TM 100 x 100mm x 1.8m BROWN TREATED WOODEN POST', category: 'Posts', unit: 'Each', price: 10.63 },
+      { id: 'pdf-024', name: 'TM 100 x 100mm x 2.4m BROWN TREATED WOODEN POST', category: 'Posts', unit: 'Each', price: 14.18 },
+      { id: 'pdf-025', name: 'TM 100 x 100mm x 3.0m BROWN TREATED WOODEN POST', category: 'Posts', unit: 'Each', price: 17.72 },
+      { id: 'pdf-026', name: 'TM 150 x 150mm x 2.4m GREEN TREATED GATE POST', category: 'Gates', unit: 'Each', price: 32.70 },
+      { id: 'pdf-027', name: 'TM 150 x 150mm x 3m GREEN TREATED GATE POST', category: 'Gates', unit: 'Each', price: 40.87 },
+      { id: 'pdf-028', name: 'TM 200 x 200mm x 3m GREEN TREATED GATE POST', category: 'Gates', unit: 'Each', price: 78.72 },
+      { id: 'pdf-029', name: 'TM 38 x 87mm x 3.6m BROWN TREATED MOTO RAIL', category: 'Accessories', unit: 'Each', price: 7.06 },
+      { id: 'pdf-030', name: 'TM 75 x 125mm x 1.8m BROWN TREATED WOODEN POST', category: 'Posts', unit: 'Each', price: 9.97 },
+      { id: 'pdf-031', name: 'CLOSE BOARD GATE 1.75M X 900MM BROWN', category: 'Gates', unit: 'Each', price: 117.70 },
+      { id: 'pdf-032', name: 'CONCRETE REPAIR SPUR 75 x 75 x 1070mm', category: 'Posts', unit: 'Each', price: 8.94 },
+      { id: 'pdf-033', name: 'CONCRETE REPAIR SPUR 100 x 100 x 1220mm 4 x 4', category: 'Posts', unit: 'Each', price: 11.83 },
+      { id: 'pdf-034', name: "LT 6' x 6' TYLAP LAPPED FENCE PANEL BROWN", category: 'Panels', unit: 'Each', price: 38.42 },
+      { id: 'pdf-035', name: "LT 6' x 5' TYLAP LAPPED FENCE PANEL BROWN", category: 'Panels', unit: 'Each', price: 34.32 },
+      { id: 'pdf-036', name: "LT 6' x 4' TYLAP LAPPED FENCE PANEL BROWN", category: 'Panels', unit: 'Each', price: 31.26 },
+      { id: 'pdf-037', name: "LT 6' x 4' CLOSEBOARD FENCE PANEL BROWN", category: 'Panels', unit: 'Each', price: 41.06 },
+      { id: 'pdf-038', name: "LT 6' x 5' CLOSEBOARD FENCE PANEL BROWN", category: 'Panels', unit: 'Each', price: 44.22 },
+      { id: 'pdf-039', name: "LT 6' x 6' CLOSEBOARD FENCE PANEL BROWN", category: 'Panels', unit: 'Each', price: 46.84 },
+      { id: 'pdf-040', name: 'ELLPRO TIMBER 180CM X 180CM HARMONY DBL', category: 'Panels', unit: 'Each', price: 107.99 },
+      { id: 'pdf-041', name: 'ELLPRO TIMBER 180CM X 180CM CURVED TOP', category: 'Panels', unit: 'Each', price: 75.80 },
+      { id: 'pdf-042', name: 'ELLPRO TIMBER 180CM X 150CM CURVED TOP OAS05-FSC', category: 'Panels', unit: 'Each', price: 71.27 }
+    ];
+
+    let materials = loadMaterials();
+    let quoteItems = [];
+    let savedQuotes = loadSavedQuotes();
+    let catalogEditMode = false;
+    let activePdfUrl = '';
+    const catalogQuantities = {};
+
+    const elements = {
+      searchInput: document.getElementById('searchInput'),
+      categoryFilter: document.getElementById('categoryFilter'),
+      toggleCatalogEditBtn: document.getElementById('toggleCatalogEditBtn'),
+      addMaterialBtn: document.getElementById('addMaterialBtn'),
+      materialsBody: document.getElementById('materialsBody'),
+      quickFenceType: document.getElementById('quickFenceType'),
+      quickMetres: document.getElementById('quickMetres'),
+      quickLabourDays: document.getElementById('quickLabourDays'),
+      quickIncludeMaterials: document.getElementById('quickIncludeMaterials'),
+      quickMarkupRate: document.getElementById('quickMarkupRate'),
+      quickIncludeLabour: document.getElementById('quickIncludeLabour'),
+      quickExtraPerson: document.getElementById('quickExtraPerson'),
+      quickIncludeVat: document.getElementById('quickIncludeVat'),
+      quickQuoteSummary: document.getElementById('quickQuoteSummary'),
+      addQuickQuoteBtn: document.getElementById('addQuickQuoteBtn'),
+      quoteItemsBody: document.getElementById('quoteItemsBody'),
+      emptyQuote: document.getElementById('emptyQuote'),
+      subtotal: document.getElementById('subtotal'),
+      labourCharge: document.getElementById('labourCharge'),
+      discountRate: document.getElementById('discountRate'),
+      discountAmount: document.getElementById('discountAmount'),
+      taxRate: document.getElementById('taxRate'),
+      taxAmount: document.getElementById('taxAmount'),
+      grandTotal: document.getElementById('grandTotal'),
+      customerTotal: document.getElementById('customerTotal'),
+      quoteItemCount: document.getElementById('quoteItemCount'),
+      rawMaterialsTotal: document.getElementById('rawMaterialsTotal'),
+      fixedLinesTotal: document.getElementById('fixedLinesTotal'),
+      customerMarkupTotal: document.getElementById('customerMarkupTotal'),
+      labourDoubleCountWarning: document.getElementById('labourDoubleCountWarning'),
+      modalBackdrop: document.getElementById('modalBackdrop'),
+      modalTitle: document.getElementById('modalTitle'),
+      modalContent: document.getElementById('modalContent'),
+      closeModalBtn: document.getElementById('closeModalBtn'),
+      customerName: document.getElementById('customerName'),
+      customerPhone: document.getElementById('customerPhone'),
+      customerEmail: document.getElementById('customerEmail'),
+      siteAddress: document.getElementById('siteAddress'),
+      quoteDate: document.getElementById('quoteDate'),
+      validUntil: document.getElementById('validUntil'),
+      toast: document.getElementById('toast')
+    };
+
+    // ---------- Storage helpers ----------
+    function loadMaterials() {
+      const stored = localStorage.getItem(STORAGE_KEYS.materials);
+      const version = localStorage.getItem(STORAGE_KEYS.catalogVersion);
+      if (!stored || version !== CATALOG_VERSION) {
+        localStorage.setItem(STORAGE_KEYS.materials, JSON.stringify(pdfMaterials));
+        localStorage.setItem(STORAGE_KEYS.catalogVersion, CATALOG_VERSION);
+        return pdfMaterials.slice();
+      }
+      try {
+        return JSON.parse(stored);
+      } catch (error) {
+        localStorage.setItem(STORAGE_KEYS.materials, JSON.stringify(pdfMaterials));
+        localStorage.setItem(STORAGE_KEYS.catalogVersion, CATALOG_VERSION);
+        return pdfMaterials.slice();
+      }
+    }
+
+    function saveMaterials() {
+      localStorage.setItem(STORAGE_KEYS.materials, JSON.stringify(materials));
+    }
+
+    function loadSavedQuotes() {
+      const stored = localStorage.getItem(STORAGE_KEYS.quotes);
+      if (!stored) return [];
+      try {
+        return JSON.parse(stored);
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function saveSavedQuotes() {
+      localStorage.setItem(STORAGE_KEYS.quotes, JSON.stringify(savedQuotes));
+    }
+
+    function saveDraft() {
+      localStorage.setItem(STORAGE_KEYS.draft, JSON.stringify(getQuoteData()));
+    }
+
+    function loadDraft() {
+      const stored = localStorage.getItem(STORAGE_KEYS.draft);
+      if (!stored) return false;
+      try {
+        applyQuoteData(JSON.parse(stored));
+        saveDraft();
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
+
+    // ---------- Formatting ----------
+    function money(value) {
+      return new Intl.NumberFormat('en-GB', {
+        style: 'currency',
+        currency: 'GBP'
+      }).format(Number(value) || 0);
+    }
+
+    function todayISO() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function futureISO(days) {
+      const date = new Date();
+      date.setDate(date.getDate() + days);
+      return date.toISOString().slice(0, 10);
+    }
+
+    function makeId(prefix) {
+      return prefix + '-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+    }
+
+    // ---------- DOM helpers ----------
+    function makeCell(text, className) {
+      const td = document.createElement('td');
+      td.className = className || 'px-3 py-3';
+      td.textContent = text;
+      return td;
+    }
+
+    function makeButton(label, className, onClick) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = className;
+      button.textContent = label;
+      button.addEventListener('click', onClick);
+      return button;
+    }
+
+    function makeIcon(pathData, label) {
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('viewBox', '0 0 24 24');
+      svg.setAttribute('fill', 'none');
+      svg.setAttribute('stroke', 'currentColor');
+      svg.setAttribute('stroke-width', '2');
+      svg.setAttribute('stroke-linecap', 'round');
+      svg.setAttribute('stroke-linejoin', 'round');
+      svg.setAttribute('aria-hidden', 'true');
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', pathData);
+      svg.appendChild(path);
+      const span = document.createElement('span');
+      span.className = 'sr-only';
+      span.textContent = label;
+      const wrap = document.createDocumentFragment();
+      wrap.appendChild(svg);
+      wrap.appendChild(span);
+      return wrap;
+    }
+
+    function makeIconButton(pathData, label, onClick) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'icon-btn inline-flex items-center justify-center rounded-lg border border-slate-200 p-2 text-slate-600 transition hover:border-forest-600 hover:bg-forest-50 hover:text-forest-800';
+      button.setAttribute('aria-label', label);
+      button.title = label;
+      button.appendChild(makeIcon(pathData, label));
+      button.addEventListener('click', onClick);
+      return button;
+    }
+
+    function makeInput(value, type, className, onInput) {
+      const input = document.createElement('input');
+      input.type = type || 'text';
+      input.value = value;
+      input.className = className || 'focus-ring w-full rounded-lg border border-slate-200 bg-white px-2 py-1';
+      input.addEventListener('input', onInput);
+      return input;
+    }
+
+    // ---------- Quick quote ----------
+    const QUICK_LABOUR_DAY_RATE = 250;
+    const QUICK_VAT_RATE = 20;
+    const QUICK_MATERIALS = {
+      postFix: '20KG HANSON FAST SET POST FIX (BS 5838 PART 1)',
+      concretePost150: 'SLOTTED CONCRETE POST INTERMEDIATE 2440mm 8ft',
+      concretePost300: 'SLOTTED CONCRETE POST INTERMEDIATE 2745mm 9ft',
+      concretePost450: 'SLOTTED CONCRETE POST INTERMEDIATE 3050mm 10ft',
+      concreteGravel150: 'CONCRETE RECESSED GRAVEL BOARD 1830 x 150 x 45mm',
+      concreteGravel300: 'CONCRETE RECESSED GRAVEL BOARD 1830 x 305 x 45mm',
+      concretePanel: "LT 6' x 6' CLOSEBOARD FENCE PANEL BROWN",
+      timberPost: 'TM 100 x 100mm x 2.4m BROWN TREATED WOODEN POST',
+      timberCantRail: 'TM 47 x 125mm x 2.4m BROWN TREATED CANT RAIL',
+      timberGravelBoard: 'TM 22 x 150mm x 2.4m BROWN TREATED GRAVEL BOARD',
+      timberFeatherEdge: 'TM 22 x 125mm x 1.65m BROWN TREATED FEATHER EDGE'
+    };
+
+    function findMaterialByName(name) {
+      return materials.find(function(item) { return item.name === name; });
+    }
+
+    function getMaterialPrice(name) {
+      const item = findMaterialByName(name);
+      return item ? Number(item.price) || 0 : 0;
+    }
+
+    function getQuickQuoteLine(label, name, qty) {
+      return {
+        label: label,
+        name: name,
+        qty: qty,
+        unitPrice: getMaterialPrice(name),
+        missing: !findMaterialByName(name)
+      };
+    }
+
+    function getQuickQuoteSpec(type, metres) {
+      const isConcrete = type.indexOf('concrete') === 0;
+      const bayLength = isConcrete ? 1.8 : 2.4;
+      const bays = metres > 0 ? Math.ceil(metres / bayLength) : 0;
+      const posts = bays > 0 ? bays + 1 : 0;
+      const lines = [];
+      let title = '';
+
+      if (type === 'concrete-150') {
+        title = 'Concrete closeboard fencing - 150mm gravel board';
+        lines.push(getQuickQuoteLine('Concrete posts', QUICK_MATERIALS.concretePost150, posts));
+        lines.push(getQuickQuoteLine('150mm gravel boards', QUICK_MATERIALS.concreteGravel150, bays));
+      } else if (type === 'concrete-300') {
+        title = 'Concrete closeboard fencing - 300mm gravel board';
+        lines.push(getQuickQuoteLine('Concrete posts', QUICK_MATERIALS.concretePost300, posts));
+        lines.push(getQuickQuoteLine('300mm gravel boards', QUICK_MATERIALS.concreteGravel300, bays));
+      } else if (type === 'concrete-450') {
+        title = 'Concrete closeboard fencing - 450mm gravel board';
+        lines.push(getQuickQuoteLine('Concrete posts', QUICK_MATERIALS.concretePost450, posts));
+        lines.push(getQuickQuoteLine('300mm gravel boards', QUICK_MATERIALS.concreteGravel300, bays));
+        lines.push(getQuickQuoteLine('150mm gravel boards', QUICK_MATERIALS.concreteGravel150, bays));
+      } else {
+        title = 'Timber feather edge fencing';
+        lines.push(getQuickQuoteLine('Timber posts', QUICK_MATERIALS.timberPost, posts));
+        lines.push(getQuickQuoteLine('Cant rails', QUICK_MATERIALS.timberCantRail, bays * 4));
+        lines.push(getQuickQuoteLine('Timber gravel boards', QUICK_MATERIALS.timberGravelBoard, bays));
+        lines.push(getQuickQuoteLine('Feather edge boards', QUICK_MATERIALS.timberFeatherEdge, bays * 27));
+      }
+
+      if (isConcrete) {
+        lines.push(getQuickQuoteLine('Closeboard panels', QUICK_MATERIALS.concretePanel, bays));
+      }
+      lines.push(getQuickQuoteLine('Post fix bags', QUICK_MATERIALS.postFix, posts * 2));
+
+      return {
+        title: title,
+        metres: metres,
+        bayLength: bayLength,
+        bays: bays,
+        posts: posts,
+        lines: lines
+      };
+    }
+
+    function calculateQuickQuote() {
+      const metres = Number(elements.quickMetres.value) || 0;
+      const spec = getQuickQuoteSpec(elements.quickFenceType.value, metres);
+      const materialsCost = spec.lines.reduce(function(total, line) {
+        return total + (line.qty * line.unitPrice);
+      }, 0);
+      const includeMaterials = elements.quickIncludeMaterials.checked;
+      const markupRate = Math.max(0, Number(elements.quickMarkupRate.value) || 0);
+      const includeLabour = elements.quickIncludeLabour.checked;
+      const includeVat = elements.quickIncludeVat.checked;
+      const labourDays = Number(elements.quickLabourDays.value) || 0;
+      const labourPeople = elements.quickExtraPerson.checked ? 2 : 1;
+      const markedMaterials = includeMaterials
+        ? materialsCost * (1 + (markupRate / 100))
+        : 0;
+      const labourCost = includeLabour ? labourDays * QUICK_LABOUR_DAY_RATE * labourPeople : 0;
+      const preVatTotal = markedMaterials + labourCost;
+      const vat = includeVat ? preVatTotal * (QUICK_VAT_RATE / 100) : 0;
+      return {
+        spec: spec,
+        materialsCost: materialsCost,
+        markedMaterials: markedMaterials,
+        labourCost: labourCost,
+        preVatTotal: preVatTotal,
+        vat: vat,
+        total: preVatTotal + vat,
+        includeMaterials: includeMaterials,
+        markupRate: markupRate,
+        includeLabour: includeLabour,
+        includeVat: includeVat,
+        labourDays: labourDays,
+        labourPeople: labourPeople,
+        missing: spec.lines.filter(function(line) { return line.missing; })
+      };
+    }
+
+    function renderQuickQuote() {
+      const quote = calculateQuickQuote();
+      if (quote.spec.metres <= 0) {
+        elements.quickQuoteSummary.textContent = 'Enter metres to calculate a quick quote.';
+        elements.addQuickQuoteBtn.disabled = true;
+        elements.addQuickQuoteBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        return;
+      }
+
+      const materialRows = quote.spec.lines.map(function(line) {
+        const lineTotal = line.qty * line.unitPrice;
+        const missingClass = line.missing ? ' text-rose-700 font-semibold' : '';
+        return '<tr>' +
+          '<td class="py-1 pr-2' + missingClass + '">' + escapeHTML(line.label) + '</td>' +
+          '<td class="py-1 px-2 text-right">' + escapeHTML(line.qty) + '</td>' +
+          '<td class="py-1 px-2 text-right">' + escapeHTML(money(line.unitPrice)) + '</td>' +
+          '<td class="py-1 pl-2 text-right font-semibold">' + escapeHTML(money(lineTotal)) + '</td>' +
+        '</tr>';
+      }).join('');
+      const materialsOptionText = quote.includeMaterials ? quote.markupRate + '% markup applied' : 'Materials excluded';
+      const labourText = quote.includeLabour
+        ? escapeHTML(quote.labourDays + ' days x ' + quote.labourPeople + ' person' + (quote.labourPeople === 1 ? '' : 's') + ' x ' + money(QUICK_LABOUR_DAY_RATE))
+        : 'Labour excluded';
+      const vatText = quote.includeVat ? '20% VAT applied' : 'VAT excluded';
+      const missingText = quote.missing.length
+        ? '<p class="mt-2 rounded-md bg-rose-50 px-3 py-2 font-semibold text-rose-700">Missing catalog items: ' + escapeHTML(quote.missing.map(function(line) { return line.name; }).join(', ')) + '</p>'
+        : '';
+
+      elements.quickQuoteSummary.innerHTML =
+        '<div class="space-y-3">' +
+          '<div class="flex items-center justify-between gap-3"><span class="font-bold text-forest-900">' + escapeHTML(quote.spec.bays + ' bays, ' + quote.spec.posts + ' posts') + '</span><strong class="text-xl text-forest-900">' + escapeHTML(money(quote.total)) + '</strong></div>' +
+          '<div class="rounded-md bg-forest-50 px-3 py-2 text-xs text-slate-700">' +
+            '<p><strong>Bay calculation:</strong> ' + escapeHTML(quote.spec.metres + 'm / ' + quote.spec.bayLength + 'm bay = ' + (quote.spec.metres / quote.spec.bayLength).toFixed(2) + ', rounded up to ' + quote.spec.bays + ' bays') + '</p>' +
+            '<p><strong>Post calculation:</strong> ' + escapeHTML(quote.spec.bays + ' bays + 1 = ' + quote.spec.posts + ' posts, with 2 post fix bags per post') + '</p>' +
+          '</div>' +
+          '<div class="overflow-hidden rounded-md border border-slate-200 bg-white">' +
+            '<table class="w-full text-xs">' +
+              '<thead class="bg-forest-50 text-slate-700"><tr><th class="px-2 py-2 text-left">Material</th><th class="px-2 py-2 text-right">Qty</th><th class="px-2 py-2 text-right">Each</th><th class="px-2 py-2 text-right">Total</th></tr></thead>' +
+              '<tbody class="divide-y divide-slate-100">' + materialRows + '</tbody>' +
+            '</table>' +
+          '</div>' +
+          '<div class="space-y-1 rounded-md bg-white px-3 py-2 text-xs text-slate-700">' +
+            '<div class="flex justify-between gap-3"><span>Raw materials total</span><strong>' + escapeHTML(money(quote.materialsCost)) + '</strong></div>' +
+            '<div class="flex justify-between gap-3"><span>' + escapeHTML(materialsOptionText) + '</span><strong>' + escapeHTML(money(quote.markedMaterials)) + '</strong></div>' +
+            '<div class="flex justify-between gap-3"><span>' + labourText + '</span><strong>' + escapeHTML(money(quote.labourCost)) + '</strong></div>' +
+            '<div class="flex justify-between gap-3 border-t border-slate-200 pt-1"><span>Subtotal before VAT</span><strong>' + escapeHTML(money(quote.preVatTotal)) + '</strong></div>' +
+            '<div class="flex justify-between gap-3"><span>' + escapeHTML(vatText) + '</span><strong>' + escapeHTML(money(quote.vat)) + '</strong></div>' +
+            '<div class="flex justify-between gap-3 border-t border-slate-200 pt-1 text-sm text-forest-900"><span class="font-bold">Quick quote total</span><strong>' + escapeHTML(money(quote.total)) + '</strong></div>' +
+          '</div>' +
+          missingText +
+        '</div>';
+      elements.addQuickQuoteBtn.disabled = quote.missing.length > 0;
+      elements.addQuickQuoteBtn.classList.toggle('opacity-50', quote.missing.length > 0);
+      elements.addQuickQuoteBtn.classList.toggle('cursor-not-allowed', quote.missing.length > 0);
+    }
+
+    function addQuickQuoteLine() {
+      const quote = calculateQuickQuote();
+      if (quote.spec.metres <= 0 || quote.missing.length > 0) return;
+      quoteItems.push({
+        id: makeId('quote'),
+        name: quote.spec.title + ' - ' + quote.spec.metres + 'm',
+        qty: 1,
+        unit: 'Job',
+        unitPrice: quote.includeVat ? quote.preVatTotal : quote.total,
+        skipMarkup: true,
+        includesQuickLabour: quote.includeLabour && quote.labourCost > 0
+      });
+      elements.taxRate.value = quote.includeVat ? QUICK_VAT_RATE : 0;
+      renderQuoteItems();
+      saveDraft();
+      showToast('Quick quote line added.');
+    }
+
+    // ---------- Materials catalog ----------
+    function renderMaterials() {
+      const search = elements.searchInput.value.trim().toLowerCase();
+      const filter = elements.categoryFilter.value;
+      const filtered = materials.filter(function(item) {
+        const matchesSearch = item.name.toLowerCase().includes(search) || item.category.toLowerCase().includes(search);
+        const matchesCategory = filter === 'All' || item.category === filter;
+        return matchesSearch && matchesCategory;
+      });
+
+      elements.materialsBody.textContent = '';
+      filtered.forEach(function(item) {
+        const row = document.createElement('tr');
+        row.className = 'transition hover:bg-forest-50/70';
+
+        const nameCell = document.createElement('td');
+        nameCell.className = 'catalog-name-cell px-3 py-3 font-medium text-slate-900';
+        nameCell.textContent = item.name;
+        if (catalogEditMode) {
+          const actions = document.createElement('div');
+          actions.className = 'mt-2 flex flex-wrap gap-2';
+          actions.appendChild(makeButton('Edit', 'rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 transition hover:border-forest-600 hover:text-forest-800', function() {
+            openMaterialModal(item);
+          }));
+          actions.appendChild(makeButton('Delete', 'rounded-md border border-rose-200 bg-white px-3 py-1.5 text-xs font-bold text-rose-700 transition hover:border-rose-400 hover:bg-rose-50', function() {
+            deleteMaterial(item.id);
+          }));
+          nameCell.appendChild(actions);
+        }
+        row.appendChild(nameCell);
+
+        const priceCell = makeCell(money(item.price), 'px-3 py-3 text-right font-semibold text-slate-900');
+        priceCell.setAttribute('data-label', 'Price');
+        row.appendChild(priceCell);
+
+        const qtyCell = document.createElement('td');
+        qtyCell.className = 'px-3 py-3 text-center';
+        qtyCell.setAttribute('data-label', 'Qty');
+        const qtyInput = document.createElement('input');
+        qtyInput.type = 'number';
+        qtyInput.min = '0';
+        qtyInput.step = '0.01';
+        qtyInput.value = catalogQuantities[item.id] || '1';
+        qtyInput.className = 'focus-ring w-20 rounded-lg border border-slate-200 bg-white px-2 py-1 text-right';
+        qtyInput.setAttribute('aria-label', 'Quantity for ' + item.name);
+        qtyInput.addEventListener('input', function(event) {
+          catalogQuantities[item.id] = event.target.value;
+        });
+        qtyCell.appendChild(qtyInput);
+        row.appendChild(qtyCell);
+
+        const addCell = document.createElement('td');
+        addCell.className = 'px-3 py-3 text-center';
+        addCell.setAttribute('data-label', 'Add');
+        addCell.appendChild(makeButton('Add', 'rounded-md bg-forest-800 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-forest-900', function() {
+          addQuoteItem(item, Number(qtyInput.value) || 0);
+        }));
+        row.appendChild(addCell);
+        elements.materialsBody.appendChild(row);
+      });
+
+      elements.toggleCatalogEditBtn.textContent = catalogEditMode ? 'Done Editing' : 'Enable Catalog Editing';
+      elements.addMaterialBtn.classList.toggle('hidden', !catalogEditMode);
+    }
+
+    function addQuoteItem(item, quantity) {
+      const qty = quantity > 0 ? quantity : 1;
+      quoteItems.push({
+        id: makeId('quote'),
+        name: item.name,
+        qty: qty,
+        unit: item.unit,
+        unitPrice: Number(item.price) || 0
+      });
+      renderQuoteItems();
+      saveDraft();
+    }
+
+    function deleteMaterial(id) {
+      const item = materials.find(function(material) { return material.id === id; });
+      if (!item) return;
+      openConfirmModal('Delete "' + item.name + '" from the catalog?', function() {
+        materials = materials.filter(function(material) { return material.id !== id; });
+        saveMaterials();
+        renderMaterials();
+        renderQuickQuote();
+        closeModal();
+        showToast('Material deleted.');
+      });
+    }
+
+    // ---------- Quote builder ----------
+    function renderQuoteItems() {
+      elements.quoteItemsBody.textContent = '';
+      elements.emptyQuote.classList.toggle('hidden', quoteItems.length > 0);
+
+      quoteItems.forEach(function(item) {
+        const row = document.createElement('tr');
+        row.className = 'transition hover:bg-forest-50/70';
+
+        const nameCell = document.createElement('td');
+        nameCell.className = 'quote-name-cell min-w-0 px-3 py-3';
+        nameCell.appendChild(makeInput(item.name, 'text', 'focus-ring w-full rounded-lg border border-slate-200 bg-white px-2 py-1 font-medium text-slate-900', function(event) {
+          item.name = event.target.value;
+          saveDraft();
+        }));
+        if (item.skipMarkup) {
+          const note = document.createElement('p');
+          note.className = 'mt-1 text-xs font-semibold text-forest-800';
+          note.textContent = item.includesQuickLabour ? 'Fixed price quick quote, includes labour' : 'Fixed price quick quote';
+          nameCell.appendChild(note);
+        }
+        row.appendChild(nameCell);
+
+        const qtyCell = document.createElement('td');
+        qtyCell.className = 'px-3 py-3';
+        qtyCell.setAttribute('data-label', 'Qty');
+        const qtyInput = makeInput(item.qty, 'number', 'focus-ring w-20 rounded-lg border border-slate-200 bg-white px-2 py-1 text-right', function(event) {
+          item.qty = Number(event.target.value) || 0;
+          updateTotals();
+          saveDraft();
+        });
+        qtyInput.min = '0';
+        qtyInput.step = '0.01';
+        qtyCell.appendChild(qtyInput);
+        row.appendChild(qtyCell);
+
+        const unitCell = document.createElement('td');
+        unitCell.className = 'px-3 py-3';
+        unitCell.setAttribute('data-label', 'Unit');
+        unitCell.appendChild(makeInput(item.unit, 'text', 'focus-ring w-24 rounded-lg border border-slate-200 bg-white px-2 py-1', function(event) {
+          item.unit = event.target.value;
+          saveDraft();
+        }));
+        row.appendChild(unitCell);
+
+        const priceCell = document.createElement('td');
+        priceCell.className = 'px-3 py-3 text-right';
+        priceCell.setAttribute('data-label', 'Unit Price');
+        const priceInput = makeInput(item.unitPrice, 'number', 'focus-ring w-28 rounded-lg border border-slate-200 bg-white px-2 py-1 text-right', function(event) {
+          item.unitPrice = Number(event.target.value) || 0;
+          updateTotals();
+          saveDraft();
+        });
+        priceInput.min = '0';
+        priceInput.step = '0.01';
+        priceCell.appendChild(priceInput);
+        row.appendChild(priceCell);
+
+        const lineCell = makeCell(money((Number(item.qty) || 0) * (Number(item.unitPrice) || 0)), 'px-3 py-3 text-right font-bold text-slate-900');
+        lineCell.setAttribute('data-label', 'Line Total');
+        row.appendChild(lineCell);
+
+        const removeCell = document.createElement('td');
+        removeCell.className = 'px-3 py-3 text-center';
+        removeCell.setAttribute('data-label', 'Remove');
+        removeCell.appendChild(makeIconButton('M18 6 6 18 M6 6l12 12', 'Remove item', function() {
+          quoteItems = quoteItems.filter(function(quoteItem) { return quoteItem.id !== item.id; });
+          renderQuoteItems();
+          saveDraft();
+        }));
+        row.appendChild(removeCell);
+
+        elements.quoteItemsBody.appendChild(row);
+      });
+
+      updateTotals();
+    }
+
+    function updateTotals() {
+      const totals = getTotals();
+
+      elements.subtotal.textContent = money(totals.subtotal);
+      elements.discountAmount.textContent = '-' + money(totals.discount);
+      elements.taxAmount.textContent = money(totals.tax);
+      elements.grandTotal.textContent = money(totals.grandTotal);
+      elements.customerTotal.textContent = money(totals.customerTotal);
+      elements.quoteItemCount.textContent = quoteItems.length + ' item' + (quoteItems.length === 1 ? '' : 's');
+      elements.rawMaterialsTotal.textContent = money(totals.materialsSubtotal);
+      elements.fixedLinesTotal.textContent = money(totals.fixedSubtotal);
+      elements.customerMarkupTotal.textContent = money(totals.customerMaterialsSubtotal - totals.materialsSubtotal);
+      const hasQuickLabour = quoteItems.some(function(item) { return item.includesQuickLabour; });
+      const hasManualLabour = totals.labourCharge > 0;
+      elements.labourDoubleCountWarning.classList.toggle('hidden', !(hasQuickLabour && hasManualLabour));
+
+      const rows = elements.quoteItemsBody.querySelectorAll('tr');
+      quoteItems.forEach(function(item, index) {
+        const lineCell = rows[index] ? rows[index].children[4] : null;
+        if (lineCell) {
+          lineCell.textContent = money((Number(item.qty) || 0) * (Number(item.unitPrice) || 0));
+        }
+      });
+    }
+
+    function getTotals() {
+      const materialsSubtotal = quoteItems.reduce(function(total, item) {
+        if (item.skipMarkup) return total;
+        return total + ((Number(item.qty) || 0) * (Number(item.unitPrice) || 0));
+      }, 0);
+      const fixedSubtotal = quoteItems.reduce(function(total, item) {
+        if (!item.skipMarkup) return total;
+        return total + ((Number(item.qty) || 0) * (Number(item.unitPrice) || 0));
+      }, 0);
+      const labourCharge = Number(elements.labourCharge.value) || 0;
+      const subtotal = materialsSubtotal + fixedSubtotal + labourCharge;
+      const discountRate = Number(elements.discountRate.value) || 0;
+      const discount = subtotal * (discountRate / 100);
+      const discountedSubtotal = Math.max(0, subtotal - discount);
+      const taxRate = Number(elements.taxRate.value) || 0;
+      const tax = discountedSubtotal * (taxRate / 100);
+      const customerMaterialsSubtotal = materialsSubtotal * 1.36;
+      const customerSubtotal = customerMaterialsSubtotal + fixedSubtotal + labourCharge;
+      const customerDiscount = customerSubtotal * (discountRate / 100);
+      const customerTaxable = Math.max(0, customerSubtotal - customerDiscount);
+      const customerTax = customerTaxable * (taxRate / 100);
+      return {
+        materialsSubtotal: materialsSubtotal,
+        fixedSubtotal: fixedSubtotal,
+        labourCharge: labourCharge,
+        subtotal: subtotal,
+        discountRate: discountRate,
+        discount: discount,
+        discountedSubtotal: discountedSubtotal,
+        taxRate: taxRate,
+        tax: tax,
+        grandTotal: discountedSubtotal + tax,
+        customerMaterialsSubtotal: customerMaterialsSubtotal,
+        customerSubtotal: customerSubtotal,
+        customerDiscount: customerDiscount,
+        customerTaxable: customerTaxable,
+        customerTax: customerTax,
+        customerTotal: customerTaxable + customerTax
+      };
+    }
+
+    function getQuoteData() {
+      return {
+        id: makeId('draft'),
+        customer: {
+          name: elements.customerName.value,
+          phone: elements.customerPhone.value,
+          email: elements.customerEmail.value,
+          siteAddress: elements.siteAddress.value,
+          quoteDate: elements.quoteDate.value,
+          validUntil: elements.validUntil.value
+        },
+        items: quoteItems.map(function(item) {
+          return {
+            id: item.id,
+            name: item.name,
+            qty: Number(item.qty) || 0,
+            unit: item.unit,
+            unitPrice: Number(item.unitPrice) || 0,
+            skipMarkup: Boolean(item.skipMarkup),
+            includesQuickLabour: Boolean(item.includesQuickLabour)
+          };
+        }),
+        labourCharge: Number(elements.labourCharge.value) || 0,
+        discountRate: Number(elements.discountRate.value) || 0,
+        taxRate: Number(elements.taxRate.value) || 0,
+        savedAt: new Date().toISOString()
+      };
+    }
+
+    function applyQuoteData(data) {
+      const customer = data.customer || {};
+      elements.customerName.value = customer.name || '';
+      elements.customerPhone.value = customer.phone || '';
+      elements.customerEmail.value = customer.email || '';
+      elements.siteAddress.value = customer.siteAddress || '';
+      elements.quoteDate.value = customer.quoteDate || todayISO();
+      elements.validUntil.value = customer.validUntil || futureISO(30);
+      elements.labourCharge.value = data.labourCharge === undefined ? 0 : data.labourCharge;
+      elements.discountRate.value = data.discountRate === undefined ? 0 : data.discountRate;
+      elements.taxRate.value = data.taxRate === undefined ? 20 : data.taxRate;
+      quoteItems = (data.items || []).map(function(item) {
+        const unitPrice = migrateLoadedMaterialPrice(item);
+        return {
+          id: item.id || makeId('quote'),
+          name: item.name || '',
+          qty: Number(item.qty) || 0,
+          unit: item.unit || '',
+          unitPrice: unitPrice,
+          skipMarkup: Boolean(item.skipMarkup),
+          includesQuickLabour: Boolean(item.includesQuickLabour)
+        };
+      });
+      renderQuoteItems();
+    }
+
+    function migrateLoadedMaterialPrice(item) {
+      const originalPrice = Number(item.unitPrice) || 0;
+      const material = materials.find(function(candidate) {
+        return candidate.name === item.name;
+      });
+      if (!material) return originalPrice;
+      const oldVatExclusivePrice = Math.round((Number(material.price) / 1.2) * 100) / 100;
+      if (Math.abs(originalPrice - oldVatExclusivePrice) < 0.005) {
+        return Number(material.price) || originalPrice;
+      }
+      return originalPrice;
+    }
+
+    // ---------- Modals ----------
+    function openModal(title) {
+      elements.modalTitle.textContent = title;
+      elements.modalContent.textContent = '';
+      elements.modalBackdrop.classList.remove('hidden');
+      elements.modalBackdrop.classList.add('flex');
+    }
+
+    function closeModal() {
+      elements.modalBackdrop.classList.add('hidden');
+      elements.modalBackdrop.classList.remove('flex');
+      elements.modalContent.textContent = '';
+    }
+
+    function showToast(message) {
+      elements.toast.textContent = message;
+      elements.toast.classList.remove('hidden');
+      window.clearTimeout(showToast.timeoutId);
+      showToast.timeoutId = window.setTimeout(function() {
+        elements.toast.classList.add('hidden');
+      }, 2200);
+    }
+
+    function makeField(labelText, input) {
+      const label = document.createElement('label');
+      label.className = 'block text-sm font-semibold text-slate-600';
+      label.textContent = labelText;
+      input.className = 'focus-ring mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 font-normal text-slate-800';
+      label.appendChild(input);
+      return label;
+    }
+
+    function openMaterialModal(item) {
+      const isEdit = Boolean(item);
+      openModal(isEdit ? 'Edit Material' : 'Add New Material');
+      const form = document.createElement('form');
+      form.className = 'space-y-4';
+
+      const nameInput = document.createElement('input');
+      nameInput.required = true;
+      nameInput.value = item ? item.name : '';
+
+      const categorySelect = document.createElement('select');
+      categories.forEach(function(category) {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category;
+        categorySelect.appendChild(option);
+      });
+      categorySelect.value = item ? item.category : 'Posts';
+
+      const unitInput = document.createElement('input');
+      unitInput.required = true;
+      unitInput.value = item ? item.unit : 'each';
+
+      const priceInput = document.createElement('input');
+      priceInput.type = 'number';
+      priceInput.min = '0';
+      priceInput.step = '0.01';
+      priceInput.required = true;
+      priceInput.value = item ? item.price : '';
+
+      form.appendChild(makeField('Name', nameInput));
+      form.appendChild(makeField('Category', categorySelect));
+      form.appendChild(makeField('Unit', unitInput));
+      form.appendChild(makeField('Price', priceInput));
+
+      const actions = document.createElement('div');
+      actions.className = 'flex justify-end gap-2 pt-2';
+      actions.appendChild(makeButton('Cancel', 'rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-forest-600 hover:text-forest-800', closeModal));
+      actions.appendChild(makeButton(isEdit ? 'Save Material' : 'Add Material', 'rounded-lg bg-forest-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-forest-900', function() {
+        if (!form.reportValidity()) return;
+        const payload = {
+          id: isEdit ? item.id : makeId('mat'),
+          name: nameInput.value.trim(),
+          category: categorySelect.value,
+          unit: unitInput.value.trim(),
+          price: Number(priceInput.value) || 0
+        };
+        if (isEdit) {
+          materials = materials.map(function(material) {
+            return material.id === item.id ? payload : material;
+          });
+        } else {
+          materials.push(payload);
+        }
+        saveMaterials();
+        renderMaterials();
+        renderQuickQuote();
+        closeModal();
+      }));
+      form.appendChild(actions);
+      elements.modalContent.appendChild(form);
+      nameInput.focus();
+    }
+
+    function openConfirmModal(message, onConfirm) {
+      openModal('Confirm');
+      const wrapper = document.createElement('div');
+      wrapper.className = 'space-y-5';
+      const copy = document.createElement('p');
+      copy.className = 'text-sm text-slate-600';
+      copy.textContent = message;
+      const actions = document.createElement('div');
+      actions.className = 'flex justify-end gap-2';
+      actions.appendChild(makeButton('Cancel', 'rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-forest-600 hover:text-forest-800', closeModal));
+      actions.appendChild(makeButton('Confirm', 'rounded-lg bg-forest-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-forest-900', onConfirm));
+      wrapper.appendChild(copy);
+      wrapper.appendChild(actions);
+      elements.modalContent.appendChild(wrapper);
+    }
+
+    function openCustomItemModal() {
+      openModal('Add Custom Item');
+      const form = document.createElement('form');
+      form.className = 'space-y-4';
+
+      const nameInput = document.createElement('input');
+      nameInput.required = true;
+      const qtyInput = document.createElement('input');
+      qtyInput.type = 'number';
+      qtyInput.min = '0';
+      qtyInput.step = '0.01';
+      qtyInput.required = true;
+      qtyInput.value = '1';
+      const unitInput = document.createElement('input');
+      unitInput.required = true;
+      unitInput.value = 'each';
+      const priceInput = document.createElement('input');
+      priceInput.type = 'number';
+      priceInput.min = '0';
+      priceInput.step = '0.01';
+      priceInput.required = true;
+
+      form.appendChild(makeField('Item', nameInput));
+      form.appendChild(makeField('Quantity', qtyInput));
+      form.appendChild(makeField('Unit', unitInput));
+      form.appendChild(makeField('Unit Price', priceInput));
+
+      const actions = document.createElement('div');
+      actions.className = 'flex justify-end gap-2 pt-2';
+      actions.appendChild(makeButton('Cancel', 'rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-forest-600 hover:text-forest-800', closeModal));
+      actions.appendChild(makeButton('Add Item', 'rounded-lg bg-forest-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-forest-900', function() {
+        if (!form.reportValidity()) return;
+        quoteItems.push({
+          id: makeId('quote'),
+          name: nameInput.value.trim(),
+          qty: Number(qtyInput.value) || 0,
+          unit: unitInput.value.trim(),
+          unitPrice: Number(priceInput.value) || 0
+        });
+        renderQuoteItems();
+        saveDraft();
+        closeModal();
+      }));
+      form.appendChild(actions);
+      elements.modalContent.appendChild(form);
+      nameInput.focus();
+    }
+
+    function openSavedQuotesModal() {
+      openModal('Load Quote');
+      if (savedQuotes.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'rounded-lg bg-slate-50 p-4 text-sm text-slate-500';
+        empty.textContent = 'No saved quotes yet.';
+        elements.modalContent.appendChild(empty);
+        return;
+      }
+
+      const list = document.createElement('div');
+      list.className = 'max-h-96 space-y-2 overflow-auto';
+      savedQuotes.forEach(function(quote) {
+        const row = document.createElement('div');
+        row.className = 'flex items-center justify-between gap-3 rounded-lg border border-slate-200 p-3 transition hover:border-forest-600 hover:bg-forest-50';
+        const meta = document.createElement('button');
+        meta.type = 'button';
+        meta.className = 'min-w-0 flex-1 text-left';
+        meta.addEventListener('click', function() {
+          applyQuoteData(quote.data);
+          saveDraft();
+          closeModal();
+        });
+        const name = document.createElement('p');
+        name.className = 'truncate font-bold text-slate-900';
+        name.textContent = quote.name;
+        const details = document.createElement('p');
+        details.className = 'text-xs text-slate-500';
+        details.textContent = new Date(quote.savedAt).toLocaleString('en-GB') + ' Â· ' + (quote.data.items ? quote.data.items.length : 0) + ' items';
+        meta.appendChild(name);
+        meta.appendChild(details);
+        row.appendChild(meta);
+        row.appendChild(makeIconButton('M3 6h18 M8 6V4h8v2 M6 6l1 14h10l1-14', 'Delete saved quote', function() {
+          openConfirmModal('Delete saved quote "' + quote.name + '"?', function() {
+            savedQuotes = savedQuotes.filter(function(saved) { return saved.id !== quote.id; });
+            saveSavedQuotes();
+            openSavedQuotesModal();
+            showToast('Saved quote deleted.');
+          });
+        }));
+        list.appendChild(row);
+      });
+      elements.modalContent.appendChild(list);
+    }
+
+    // ---------- Actions ----------
+    function saveQuote() {
+      const defaultName = 'Quote ' + new Date().toLocaleString('en-GB');
+      openModal('Save Quote');
+      const form = document.createElement('form');
+      form.className = 'space-y-4';
+      const nameInput = document.createElement('input');
+      nameInput.required = true;
+      nameInput.value = defaultName;
+      form.appendChild(makeField('Quote Name', nameInput));
+      const actions = document.createElement('div');
+      actions.className = 'flex justify-end gap-2 pt-2';
+      actions.appendChild(makeButton('Cancel', 'rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-forest-600 hover:text-forest-800', closeModal));
+      actions.appendChild(makeButton('Save Quote', 'rounded-lg bg-forest-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-forest-900', function() {
+        if (!form.reportValidity()) return;
+        const data = getQuoteData();
+        savedQuotes.unshift({
+          id: makeId('saved'),
+          name: nameInput.value.trim() || defaultName,
+          data: data,
+          savedAt: new Date().toISOString()
+        });
+        saveSavedQuotes();
+        saveDraft();
+        closeModal();
+        showToast('Quote saved.');
+      }));
+      form.appendChild(actions);
+      elements.modalContent.appendChild(form);
+      nameInput.select();
+    }
+
+    function clearQuote() {
+      if (quoteItems.length > 0 || elements.customerName.value || elements.siteAddress.value) {
+        openConfirmModal('Start a new quote and clear the current details?', function() {
+          resetQuote();
+          closeModal();
+          showToast('New quote started.');
+        });
+        return;
+      }
+      resetQuote();
+    }
+
+    function resetQuote() {
+      quoteItems = [];
+      elements.customerName.value = '';
+      elements.customerPhone.value = '';
+      elements.customerEmail.value = '';
+      elements.siteAddress.value = '';
+      elements.quoteDate.value = todayISO();
+      elements.validUntil.value = futureISO(30);
+      elements.labourCharge.value = 0;
+      elements.discountRate.value = 0;
+      elements.taxRate.value = 20;
+      renderQuoteItems();
+      saveDraft();
+    }
+
+    function exportPDF() {
+      const data = getQuoteData();
+      const totals = getTotals();
+      const html = buildHoldwaysQuoteHTML(data, totals);
+      if (activePdfUrl) {
+        URL.revokeObjectURL(activePdfUrl);
+      }
+      const blob = new Blob([html], { type: 'text/html' });
+      activePdfUrl = URL.createObjectURL(blob);
+      openHTMLPDFModal(activePdfUrl);
+      showToast('Holdways quote is ready.');
+    }
+
+    function escapeHTML(value) {
+      return String(value === undefined || value === null ? '' : value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function buildHoldwaysQuoteHTML(data, totals) {
+      const logoUrl = new URL('../logo.png', location.href).href;
+      const rows = data.items.map(function(item) {
+        const quantity = Number(item.qty) || 0;
+        const unitPrice = (Number(item.unitPrice) || 0) * (item.skipMarkup ? 1 : 1.36);
+        return {
+          name: item.name,
+          qty: quantity,
+          unit: item.unit || '',
+          unitPrice: unitPrice,
+          total: quantity * unitPrice
+        };
+      });
+      if (totals.labourCharge > 0) {
+        rows.push({ name: 'Labour Charge', qty: 1, unit: 'Job', unitPrice: totals.labourCharge, total: totals.labourCharge });
+      }
+      const itemRows = rows.length ? rows.map(function(row) {
+        return '<tr><td class="item-name">' + escapeHTML(row.name) + '</td><td class="num">' + escapeHTML(row.qty) + '</td><td>' + escapeHTML(row.unit) + '</td><td class="money">' + escapeHTML(money(row.unitPrice)) + '</td><td class="money">' + escapeHTML(money(row.total)) + '</td></tr>';
+      }).join('') : '<tr><td colspan="5" class="empty-row">No items added.</td></tr>';
+      const discountRow = totals.customerDiscount > 0
+        ? '<div class="total-row"><span>Discount (' + escapeHTML(totals.discountRate) + '%)</span><strong>-' + escapeHTML(money(totals.customerDiscount)) + '</strong></div>'
+        : '';
+      const quoteDate = data.customer.quoteDate || todayISO();
+      const validUntil = data.customer.validUntil || '-';
+
+      return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Holdways Quotation</title><style>' +
+        ':root{--paper:#eef1ec;--cream:#fcfaf4;--ink:#20271f;--muted:#637063;--line:rgba(32,39,31,.16);--moss:#466b52;--deep:#20271f;--clay:#9b684f;--serif:Constantia,"Sitka Text","Palatino Linotype",Georgia,serif;--sans:"Segoe UI Variable","Segoe UI",system-ui,-apple-system,BlinkMacSystemFont,sans-serif}' +
+        '*{box-sizing:border-box}html,body{margin:0;background:linear-gradient(115deg,rgba(238,241,236,.97),rgba(232,228,218,.93) 42%,rgba(215,224,221,.96));color:var(--ink);font-family:var(--sans)}body:before{position:fixed;inset:0;background-image:linear-gradient(rgba(32,39,31,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(32,39,31,.04) 1px,transparent 1px);background-size:34px 34px;content:"";pointer-events:none}.page{width:210mm;min-height:297mm;margin:0 auto;display:grid;place-items:center;padding:8mm;position:relative}.business-card{position:relative;z-index:1;width:100%;min-height:279mm;display:grid;grid-template-rows:auto 1fr auto;overflow:hidden;border:1px solid var(--line);border-radius:18px;background:rgba(252,250,244,.92);box-shadow:0 26px 80px rgba(35,39,31,.22)}.card-top{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8mm;background:var(--cream);padding:7mm;border-bottom:1px solid var(--line)}.logo{width:76mm;height:auto}.quote-head{text-align:right}.quote-head h1{margin:0;color:var(--ink);font-family:var(--serif);font-size:30pt;line-height:1}.quote-head p{margin:2mm 0 0;color:var(--muted);font-size:8.6pt;line-height:1.35}.card-body{padding:6mm;display:grid;gap:5mm}.intro-panel{display:grid;grid-template-columns:1fr auto;gap:6mm;align-items:end;border:1px solid var(--line);border-radius:14px;background:rgba(238,243,232,.72);padding:4mm}.intro-panel h2{max-width:9em;margin:0;color:var(--ink);font-family:var(--serif);font-size:22pt;line-height:1.05}.intro{margin:2mm 0 0;color:var(--muted);font-size:9.5pt;line-height:1.4}.quote-badge{border-radius:999px;background:var(--moss);color:#fff;padding:2.4mm 4mm;font-size:8pt;font-weight:900;white-space:nowrap}.meta-grid{display:grid;grid-template-columns:1.12fr .88fr;gap:4mm}.panel{border:1px solid var(--line);border-radius:14px;background:rgba(252,250,244,.72);overflow:hidden}.panel-title{background:rgba(238,243,232,.78);border-bottom:1px solid var(--line);color:var(--ink);font-family:var(--serif);font-size:12pt;font-weight:700;padding:2.6mm 4mm}.fields{display:grid;grid-template-columns:1fr 1fr;gap:3mm 5mm;padding:4mm}.field.address{grid-column:1/-1}.label{display:block;color:var(--muted);font-size:7pt;font-weight:900;letter-spacing:.1em;text-transform:uppercase}.value{display:block;margin-top:.8mm;color:var(--ink);font-size:9.3pt;line-height:1.25;overflow-wrap:anywhere}.quote-meta{padding:4mm}.quote-meta .field{padding-bottom:3mm;margin-bottom:3mm;border-bottom:1px solid var(--line)}.quote-meta .field:last-child{border-bottom:0;margin-bottom:0;padding-bottom:0}.items-title{display:flex;align-items:flex-end;justify-content:space-between;margin:1mm 0 -2mm}.items-title h2{margin:0;color:var(--ink);font-family:var(--serif);font-size:17pt}.items-title span{color:var(--muted);font-size:8pt;font-weight:800}.items{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border:1px solid var(--line);border-radius:14px;background:var(--cream)}.items th{background:rgba(238,243,232,.9);color:var(--ink);font-size:7.3pt;letter-spacing:.09em;text-align:left;text-transform:uppercase;padding:2.4mm}.items td{border-top:1px solid var(--line);padding:2.25mm 2.4mm;font-size:8.55pt;vertical-align:top}.items tbody tr:first-child td{border-top:0}.items tbody tr:nth-child(even) td{background:rgba(238,243,232,.5)}.item-name{width:46%;font-weight:650;overflow-wrap:anywhere}.num{text-align:right}.money{text-align:right;white-space:nowrap}.empty-row{text-align:center;color:var(--muted);padding:7mm!important}.bottom{display:grid;grid-template-columns:1fr 84mm;gap:6mm;align-items:start}.note{border-left:3px solid var(--clay);padding-left:3mm;color:var(--muted);font-size:8.2pt;line-height:1.4}.summary{border:1px solid var(--line);border-radius:14px;background:var(--cream);overflow:hidden}.total-row{display:flex;justify-content:space-between;gap:8mm;padding:2.45mm 4mm;border-bottom:1px solid var(--line);font-size:9.2pt}.total-row span{color:var(--muted)}.total-row strong{color:var(--ink);white-space:nowrap}.customer-total{background:var(--moss);color:#fff;border-bottom:0;font-family:var(--serif);font-size:14pt;font-weight:700}.customer-total span,.customer-total strong{color:#fff}.card-footer{display:flex;justify-content:space-between;gap:8mm;align-items:center;border-top:1px solid var(--line);background:var(--cream);padding:3mm 6mm;color:var(--muted);font-size:8pt}.card-footer strong{color:var(--clay)}@page{size:A4;margin:0}@media print{body{background:var(--paper)}.page{margin:0}.business-card{box-shadow:none}.no-print{display:none!important}}' +
+        '</style></head><body><main class="page"><section class="business-card"><header class="card-top"><img class="logo" src="' + escapeHTML(logoUrl) + '" alt="Holdways Fencing & Landscaping"><div class="quote-head"><h1>Quotation</h1><p>07754 274196<br>hello@holdways.co.uk<br>holdways.co.uk</p></div></header><div class="card-body"><section class="intro-panel"><div><h2>Your Space. Expertly Quoted.</h2><p class="intro">A clear Holdways quotation for the work discussed, prepared for the project address below.</p></div><span class="quote-badge">Customer quote</span></section><section class="meta-grid"><div class="panel"><div class="panel-title">Prepared for</div><div class="fields"><div class="field"><span class="label">Customer</span><span class="value">' + escapeHTML(data.customer.name || '-') + '</span></div><div class="field"><span class="label">Phone</span><span class="value">' + escapeHTML(data.customer.phone || '-') + '</span></div><div class="field"><span class="label">Email</span><span class="value">' + escapeHTML(data.customer.email || '-') + '</span></div><div class="field address"><span class="label">Site Address</span><span class="value">' + escapeHTML(data.customer.siteAddress || '-') + '</span></div></div></div><div class="panel"><div class="panel-title">Quote details</div><div class="quote-meta"><div class="field"><span class="label">Quote date</span><span class="value">' + escapeHTML(quoteDate) + '</span></div><div class="field"><span class="label">Valid until</span><span class="value">' + escapeHTML(validUntil) + '</span></div><div class="field"><span class="label">Prepared by</span><span class="value">Holdways Fencing & Landscaping</span></div></div></div></section><div class="items-title"><h2>Quotation items</h2><span>Customer copy</span></div><table class="items"><thead><tr><th>Item</th><th class="num">Qty</th><th>Unit</th><th class="money">Unit Price</th><th class="money">Total</th></tr></thead><tbody>' + itemRows + '</tbody></table><section class="bottom"><p class="note">This quotation is prepared for the named customer and project address above. Please contact Holdways if any measurements, specification details, access requirements, or site conditions need to be updated.</p><div class="summary"><div class="total-row"><span>Subtotal</span><strong>' + escapeHTML(money(totals.customerSubtotal)) + '</strong></div>' + discountRow + '<div class="total-row"><span>VAT (' + escapeHTML(totals.taxRate) + '%)</span><strong>' + escapeHTML(money(totals.customerTax)) + '</strong></div><div class="total-row customer-total"><span>Grand Total</span><strong>' + escapeHTML(money(totals.customerTotal)) + '</strong></div></div></section></div><footer class="card-footer"><span>Thank you for asking <strong>Holdways</strong> to quote for your project.</span><span>07754 274196 | hello@holdways.co.uk | holdways.co.uk</span></footer></section></main><script>window.addEventListener("load",function(){setTimeout(function(){window.print();},350);});<\/script></body></html>';
+    }
+
+    function openPrintPDFWindow(html) {
+      const win = window.open('', '_blank');
+      if (!win) return false;
+      win.document.open();
+      win.document.write(html);
+      win.document.close();
+      return true;
+    }
+
+    function openHTMLPDFModal(url) {
+      openModal('PDF View Ready');
+      const wrapper = document.createElement('div');
+      wrapper.className = 'space-y-4';
+      const copy = document.createElement('p');
+      copy.className = 'text-sm text-slate-600';
+      copy.textContent = 'The Holdways-styled quotation is ready. Open it, then choose Save as PDF in the print dialog.';
+      const actions = document.createElement('div');
+      actions.className = 'flex flex-col gap-2 sm:flex-row sm:justify-end';
+      const link = document.createElement('a');
+      link.href = url;
+      link.target = '_blank';
+      link.rel = 'noopener';
+      link.className = 'rounded-lg bg-forest-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-forest-900';
+      link.textContent = 'Open Holdways Quote';
+      const closeButton = makeButton('Close', 'rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-forest-600 hover:text-forest-800', closeModal);
+      actions.appendChild(closeButton);
+      actions.appendChild(link);
+      wrapper.appendChild(copy);
+      wrapper.appendChild(actions);
+      elements.modalContent.appendChild(wrapper);
+    }
+
+    function loadJsPDFScript() {
+      if (window.jspdf && window.jspdf.jsPDF) {
+        return;
+      }
+      if (document.querySelector('script[data-jspdf-loader="true"]')) return;
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+      script.async = true;
+      script.dataset.jspdfLoader = 'true';
+      script.onload = function() { showToast('PDF tools ready. Click Export PDF.'); };
+      script.onerror = function() { showToast('PDF tools could not load. Check your connection.'); };
+      document.head.appendChild(script);
+    }
+
+    function downloadPDF(doc, filename) {
+      const blob = doc.output('blob');
+      if (activePdfUrl) {
+        URL.revokeObjectURL(activePdfUrl);
+      }
+      const url = URL.createObjectURL(blob);
+      activePdfUrl = url;
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      link.rel = 'noopener';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      openPDFReadyModal(url, filename);
+    }
+
+    function openPDFReadyModal(url, filename) {
+      openModal('PDF Ready');
+      const wrapper = document.createElement('div');
+      wrapper.className = 'space-y-4';
+      const copy = document.createElement('p');
+      copy.className = 'text-sm text-slate-600';
+      copy.textContent = 'Your Holdways quotation PDF has been generated.';
+      const actions = document.createElement('div');
+      actions.className = 'flex flex-col gap-2 sm:flex-row sm:justify-end';
+
+      const openLink = document.createElement('a');
+      openLink.href = url;
+      openLink.target = '_blank';
+      openLink.rel = 'noopener';
+      openLink.className = 'rounded-lg border border-slate-200 bg-white px-4 py-2 text-center text-sm font-semibold text-slate-700 transition hover:border-forest-600 hover:text-forest-800';
+      openLink.textContent = 'Open PDF';
+
+      const downloadLink = document.createElement('a');
+      downloadLink.href = url;
+      downloadLink.download = filename;
+      downloadLink.className = 'rounded-lg bg-forest-800 px-4 py-2 text-center text-sm font-semibold text-white transition hover:bg-forest-900';
+      downloadLink.textContent = 'Download PDF';
+
+      actions.appendChild(openLink);
+      actions.appendChild(downloadLink);
+      wrapper.appendChild(copy);
+      wrapper.appendChild(actions);
+      elements.modalContent.appendChild(wrapper);
+    }
+
+    function openExportErrorModal(error) {
+      openModal('PDF Export Failed');
+      const wrapper = document.createElement('div');
+      wrapper.className = 'space-y-4';
+      const copy = document.createElement('p');
+      copy.className = 'text-sm text-slate-600';
+      copy.textContent = 'The PDF could not be generated in this browser session. Refresh the page and try Export PDF again.';
+      const detail = document.createElement('p');
+      detail.className = 'rounded-lg bg-slate-50 p-3 text-xs text-slate-500';
+      detail.textContent = error && error.message ? error.message : 'Unknown PDF export error';
+      const actions = document.createElement('div');
+      actions.className = 'flex justify-end';
+      actions.appendChild(makeButton('Close', 'rounded-lg bg-forest-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-forest-900', closeModal));
+      wrapper.appendChild(copy);
+      wrapper.appendChild(detail);
+      wrapper.appendChild(actions);
+      elements.modalContent.appendChild(wrapper);
+    }
+
+    // ---------- Events and startup ----------
+    function bindActions() {
+      elements.addMaterialBtn.addEventListener('click', function() { openMaterialModal(null); });
+      elements.toggleCatalogEditBtn.addEventListener('click', function() {
+        catalogEditMode = !catalogEditMode;
+        renderMaterials();
+      });
+      document.getElementById('addCustomItemBtn').addEventListener('click', openCustomItemModal);
+      elements.searchInput.addEventListener('input', renderMaterials);
+      elements.categoryFilter.addEventListener('change', renderMaterials);
+      [
+        elements.quickFenceType,
+        elements.quickMetres,
+        elements.quickLabourDays,
+        elements.quickIncludeMaterials,
+        elements.quickMarkupRate,
+        elements.quickIncludeLabour,
+        elements.quickExtraPerson,
+        elements.quickIncludeVat
+      ].forEach(function(input) {
+        input.addEventListener('input', renderQuickQuote);
+        input.addEventListener('change', renderQuickQuote);
+      });
+      elements.addQuickQuoteBtn.addEventListener('click', addQuickQuoteLine);
+      document.querySelectorAll('.labour-preset').forEach(function(button) {
+        button.addEventListener('click', function() {
+          if (button.dataset.labourPreset !== undefined) {
+            elements.labourCharge.value = Number(button.dataset.labourPreset) || 0;
+          }
+          if (button.dataset.labourAdd !== undefined) {
+            elements.labourCharge.value = (Number(elements.labourCharge.value) || 0) + (Number(button.dataset.labourAdd) || 0);
+          }
+          updateTotals();
+          saveDraft();
+        });
+      });
+      [elements.labourCharge, elements.discountRate, elements.taxRate].forEach(function(input) {
+        input.addEventListener('input', function() {
+          updateTotals();
+          saveDraft();
+        });
+      });
+
+      elements.taxRate.addEventListener('change', function() {
+        updateTotals();
+        saveDraft();
+      });
+
+      [elements.customerName, elements.customerPhone, elements.customerEmail, elements.siteAddress, elements.quoteDate, elements.validUntil].forEach(function(input) {
+        input.addEventListener('input', saveDraft);
+      });
+
+      [
+        ['saveQuoteTop', saveQuote], ['saveQuoteMobile', saveQuote],
+        ['loadQuoteTop', openSavedQuotesModal], ['loadQuoteMobile', openSavedQuotesModal],
+        ['newQuoteTop', clearQuote], ['newQuoteMobile', clearQuote],
+        ['exportPdfTop', exportPDF], ['exportPdfMobile', exportPDF],
+        ['printTop', function() { window.print(); }], ['printMobile', function() { window.print(); }]
+      ].forEach(function(binding) {
+        document.getElementById(binding[0]).addEventListener('click', binding[1]);
+      });
+
+      elements.closeModalBtn.appendChild(makeIcon('M18 6 6 18 M6 6l12 12', 'Close'));
+      elements.closeModalBtn.addEventListener('click', closeModal);
+      elements.modalBackdrop.addEventListener('click', function(event) {
+        if (event.target === elements.modalBackdrop) closeModal();
+      });
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') closeModal();
+      });
+    }
+
+    function registerOfflineCache() {
+      if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
+      const cacheName = 'holdways-quote-v10';
+      const assets = [
+        location.href,
+        new URL('../logo.png', location.href).href,
+        new URL('../logowhite.png', location.href).href,
+        new URL('../HERO.JPG', location.href).href,
+        'https://cdn.tailwindcss.com',
+        'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'
+      ];
+      const workerCode = [
+        "const CACHE_NAME = '" + cacheName + "';",
+        "const ASSETS = " + JSON.stringify(assets) + ";",
+        "self.addEventListener('install', event => { event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting())); });",
+        "self.addEventListener('activate', event => { event.waitUntil(self.clients.claim()); });",
+        "self.addEventListener('fetch', event => { event.respondWith(caches.match(event.request).then(cached => cached || fetch(event.request).then(response => { const copy = response.clone(); caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy)); return response; }).catch(() => caches.match(location.href)))); });"
+      ].join('');
+      const blob = new Blob([workerCode], { type: 'text/javascript' });
+      const workerUrl = URL.createObjectURL(blob);
+      navigator.serviceWorker.register(workerUrl).catch(function() {});
+    }
+
+    function init() {
+      bindActions();
+      if (!loadDraft()) {
+        elements.quoteDate.value = todayISO();
+        elements.validUntil.value = futureISO(30);
+        elements.labourCharge.value = 0;
+        elements.discountRate.value = 0;
+        elements.taxRate.value = 20;
+      }
+      renderMaterials();
+      renderQuickQuote();
+      renderQuoteItems();
+      registerOfflineCache();
+      loadJsPDFScript();
+    }
+
+    init();
+  </script>
+</body>
+</html>
